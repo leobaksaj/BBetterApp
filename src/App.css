@@ -36,3 +36,126 @@
     transform: rotate(360deg);
   }
 }
+
+.logout{
+  position: relative;
+  right: -2550%;
+}
+
+.navbar-brand{
+  margin: 0% 0% 0% 4%;
+}
+
+.row{
+  padding: 5%;
+  padding-left: 11%;
+}
+
+.todo{
+  /* padding-top: 17%;
+  padding-left: 2%;   */
+  background: #ffffff;
+  padding: 40px 55px 45px 55px; 
+  border-radius: 15px;
+}
+
+.notlsoged{
+  width: 30%;
+  height: auto;
+  margin: auto;
+  background: #ffffff;
+  box-shadow: 0px 14px 80px rgba(34,35,58,0.2);
+  padding: 40px 55px 45px 55px;
+  border-radius: 15px;
+  transition: all .3s;
+}
+
+.TODOtd{
+  font-weight: bold;
+}
+
+.auth-innerlogin
+{
+  width: 30%;
+  height: auto;
+  margin: auto;
+  background: #ffffff;
+  box-shadow: 0px 14px 80px rgba(34,35,58,0.2);
+  padding: 40px 55px 45px 55px;
+  border-radius: 15px;
+  transition: all .3s;
+}
+
+
+
+/* KALENADR PRIVREMENI  */
+.kal{
+  border-radius: 15px;
+  background-color: #ffffff;
+  margin: 0.2%;
+}
+div.title {
+  font: x-large Verdana, Arial, Helvetica, sans-serif;
+  text-align: center;
+  height: 40px;
+  background-color: white;
+  color: black;
+  }
+/* Styling for the footer */
+div.footer {
+  font: small Verdana, Arial, Helvetica, sans-serif;
+  text-align: center;
+  }
+/* Styling for the overall table */
+.kalendar {
+  font: 100% Verdana, Arial, Helvetica, sans-serif;
+  table-layout: fixed;
+  border-collapse: collapse;
+  width: 100%;
+  }
+/* Styling for the column headers (days of the week) */
+.kalendar th {
+  padding: 0 0.5em;
+  text-align: center;
+  background-color:gray;
+  color:white;
+  }
+/* Styling for the individual cells (days) */
+.kalendar td  {     
+  font-size: medium;
+  padding: 0.25em 0.25em;   
+  width: 14%; 
+  height: 80px;
+  text-align: left;
+  vertical-align: top;
+  background-color:#ffffff;
+  }
+/* Styling for the date numbers */
+.date  {     
+  font-size: large;
+  padding: 0.25em 0.25em;   
+  text-align: left;
+  vertical-align: top;
+  }
+/* Class for individual days (coming in future release) */
+.sun {
+   color:red;
+   }
+/* Hide the month element (coming in future release) */
+th.month {
+  visibility: hidden;
+  display:none;
+  }
+ 
+  /* TODO LISTAAAA */
+
+.titlenote{
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.titlecontent{
+  background-color: aqua;
+  border-radius: 15px;
+  margin-bottom: 3%;
+}

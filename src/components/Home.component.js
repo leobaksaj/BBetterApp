@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React,{Component} from 'react';
+import {CalendarComponent} from '@syncfusion/ej2-react-calendars';
 
 export default class Home extends Component{
 
@@ -21,6 +22,8 @@ export default class Home extends Component{
              })             
             }); 
     }
+
+    dateValue: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 10);
    
   
     render(){
@@ -41,9 +44,11 @@ export default class Home extends Component{
                     </div>                 
 
                                 {/* KALENDAR  */}
-                    <div className="col-md-5 kal">           
+                    <div className="col-md-5 kal">   
+                    <CalendarComponent value={this.dateValue} 
+                        isMultiSelection={true}></CalendarComponent>        
                        
-                        <div className="title">January 2021</div>
+                        {/* <div className="title">January 2021</div>
                         <table border="1" className="kalendar">
                         <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
                         <tr><td><span className="date">&nbsp;</span></td><td><span class="date">&nbsp;</span></td><td><span class="date">&nbsp;</span></td><td><span className="date">&nbsp;</span></td><td><span className="date">&nbsp;</span></td><td><span className="date">1</span></td><td><span className="date">2</span></td></tr>
@@ -52,7 +57,7 @@ export default class Home extends Component{
                         <tr><td><span className="date">17</span></td><td><span className="date">18</span></td><td><span className="date">19</span></td><td><span className="date">20</span></td><td><span className="date">21</span></td><td><span className="date">22</span></td><td><span className="date">23</span></td></tr>
                         <tr><td><span className="date">24</span></td><td><span className="date">25</span></td><td><span className="date">26</span></td><td><span className="date">27</span></td><td><span className="date">28</span></td><td><span className="date">29</span></td><td><span className="date">30</span></td></tr>
                         <tr><td><span className="date">31</span></td><td><span className="date">&nbsp;</span></td><td><span className="date">&nbsp;</span></td><td><span className="date">&nbsp;</span></td><td><span className="date">&nbsp;</span></td><td><span className="date">&nbsp;</span></td><td><span className="date">&nbsp;</span></td></tr>
-                        </table>                
+                        </table>                 */}
                                                               
                     </div>
                               

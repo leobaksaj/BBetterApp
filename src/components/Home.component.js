@@ -1,6 +1,23 @@
 import axios from 'axios';
 import React,{Component} from 'react';
 import {CalendarComponent} from '@syncfusion/ej2-react-calendars';
+import moment from 'moment';
+import { TitleCalendarComponent } from './TitleCalendar';
+import { MonitorCalendar } from './MonitorCalendar';
+import { CalendarGridComponent } from './CalendarGridComponent';
+import styled from "styled-components";
+
+const ShadowWrapper = styled('div')`
+  border-top: 1px solid #737374;
+  border-left: 1px solid #464648;
+  border-right: 1px solid #464648;
+  border-bottom: 2px solid #464648;
+  border-radius: 8px;
+  overflow:hidden;
+  margin: 5px;
+`;
+
+
 
 export default class Home extends Component{
 
@@ -21,15 +38,42 @@ export default class Home extends Component{
                  items: res.data,                 
              })             
             }); 
+
+        // window.moment =  moment;       
+      
+        // const endDay = moment().endOf('month').endOf('week');
+        //  console.log(startDay.format("YYYY-MM-DD"));
+        // console.log(endDay.format("YYYY-MM-DD"));
+        
+              
+        // const calendar = [];
+        // const day = startDay.clone(); 
+        
+        // while(!day.isAfter(endDay)){
+        //     //calendar
+        //     calendar.push(day.clone());
+        //     day.add( 1, 'day');          
+
+        // }
+        // console.log(calendar);
+
+
     }
 
-    dateValue: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 10);
+    // dateValue: Date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getUTCDay());
    
   
     render(){
+        // console.log(moment());        
        
-        if(this.props.user){               
-            
+        if(this.props.user){   
+                  
+            window.moment =  moment;     
+            moment.updateLocale('en', {week:{dow:1}});
+            const startDay = moment().startOf('month').startOf('week'); 
+            const today = moment();
+            // const startformatDay = startDay.format("YYYY-MM-DD");           
+            // console.log(startDay);  
             return(
                 <div className="row">
                     {/* TODO LISTA */}
@@ -44,9 +88,15 @@ export default class Home extends Component{
                     </div>                 
 
                                 {/* KALENDAR  */}
-                    <div className="col-md-5 kal">   
-                    <CalendarComponent value={this.dateValue} 
-                        isMultiSelection={true}></CalendarComponent>        
+                    <div className="col-md-5 kal">  
+                    <ShadowWrapper> 
+                        <TitleCalendarComponent></TitleCalendarComponent>
+                        <MonitorCalendar today={today}></MonitorCalendar>
+                        <CalendarGridComponent startDay={startDay} ></CalendarGridComponent>
+                    </ShadowWrapper>
+                    {/* <CalendarComponent value={this} 
+                        isMultiSelection={true}>
+                            </CalendarComponent>         */}
                        
                         {/* <div className="title">January 2021</div>
                         <table border="1" className="kalendar">
@@ -64,12 +114,14 @@ export default class Home extends Component{
                     <div className="col-md-3 todo">
                     {/* <h2>Hi {this.props.user.firstName} {this.props.user.lastName}</h2> */}
             
-                        <table className="table table">
-                        <div>
-                            <h4>Pomidoro Timer</h4>
-                        </div>
+                        <table className="table table">                            
+                            <thead>
+                                <tr>
+                                    <th> Pomidoro Timer</th>
+                                </tr>
+                            </thead>
                         </table>
-                    </div>                   
+                    </div>                               
                 </div>          
              
             )

@@ -48,8 +48,7 @@
 }
 
 .row{
-  padding: 5%;
-  padding-left: 11%;
+  padding-left: 8%;
 }
 
 .todo{
@@ -85,6 +84,7 @@
   padding: 40px 55px 45px 55px;
   border-radius: 15px;
   transition: all .3s;
+  
 }
 
 
@@ -95,59 +95,7 @@
   background-color: #ffffff;
   margin: 0.2%;
 }
-div.title {
-  font: x-large Verdana, Arial, Helvetica, sans-serif;
-  text-align: center;
-  height: 40px;
-  background-color: white;
-  color: black;
-  }
-/* Styling for the footer */
-div.footer {
-  font: small Verdana, Arial, Helvetica, sans-serif;
-  text-align: center;
-  }
-/* Styling for the overall table */
-.kalendar {
-  font: 100% Verdana, Arial, Helvetica, sans-serif;
-  table-layout: fixed;
-  border-collapse: collapse;
-  width: 100%;
-  }
-/* Styling for the column headers (days of the week) */
-.kalendar th {
-  padding: 0 0.5em;
-  text-align: center;
-  background-color:gray;
-  color:white;
-  }
-/* Styling for the individual cells (days) */
-.kalendar td  {     
-  font-size: medium;
-  padding: 0.25em 0.25em;   
-  width: 14%; 
-  height: 80px;
-  text-align: left;
-  vertical-align: top;
-  background-color:#ffffff;
-  }
-/* Styling for the date numbers */
-.date  {     
-  font-size: large;
-  padding: 0.25em 0.25em;   
-  text-align: left;
-  vertical-align: top;
-  }
-/* Class for individual days (coming in future release) */
-.sun {
-   color:red;
-   }
-/* Hide the month element (coming in future release) */
-th.month {
-  visibility: hidden;
-  display:none;
-  }
- 
+
   /* TODO LISTAAAA */
 
 .titlenote{

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React,{Component} from 'react';
+import React,{useEffect,useState} from 'react';
 import {CalendarComponent} from '@syncfusion/ej2-react-calendars';
 import moment from 'moment';
 import { TitleCalendarComponent } from './TitleCalendar';
@@ -17,63 +17,39 @@ const ShadowWrapper = styled('div')`
   margin: 5px;
 `;
 
+function Home(props){
 
+    const [items, setItems] = useState(); 
 
-export default class Home extends Component{
-
-    state ={};
-
-    constructor(props){
-        super(props);
-        this.state = {
-            items:[],
-        }
-    };
-
-    componentDidMount(){
+    const componentDidMount = async () => {
         let d = localStorage.getItem('data');
          axios.get(`/notes/all/${d}`)
          .then(res => {
-             this.setState({
+             this.setItems({
                  items: res.data,                 
-             })             
+             })    
+             console.log(items);         
             }); 
-
-        // window.moment =  moment;       
-      
-        // const endDay = moment().endOf('month').endOf('week');
-        //  console.log(startDay.format("YYYY-MM-DD"));
-        // console.log(endDay.format("YYYY-MM-DD"));
+           
+        // window.moment =  moment; 
+        // moment.updateLocale('en', {week:{dow:1}});     
+        //  this.setState({
+        //     setToday: moment(),
+        //  })   
+    
+        }   
+                
+        window.moment =  moment;     
+        moment.updateLocale('en', {week:{dow:1}}); 
+        const [today, setToday] = useState(moment());
+        const startDay = today.clone().startOf('month').startOf('week'); 
         
-              
-        // const calendar = [];
-        // const day = startDay.clone(); 
-        
-        // while(!day.isAfter(endDay)){
-        //     //calendar
-        //     calendar.push(day.clone());
-        //     day.add( 1, 'day');          
+        if(props.user){   
+                   
+            const prevHandler = () =>  setToday(prev => prev.clone().subtract(1, 'month'));   //this.state.setToday.clone().subtract(1, 'month');    
+            const todayHandler = () => setToday(moment());
+            const nextHandler = () =>  setToday(prev => prev.clone().add(1, 'month'))
 
-        // }
-        // console.log(calendar);
-
-
-    }
-
-    // dateValue: Date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getUTCDay());
-   
-  
-    render(){
-        // console.log(moment());        
-       
-        if(this.props.user){   
-                  
-            window.moment =  moment;     
-            moment.updateLocale('en', {week:{dow:1}});
-            const startDay = moment().startOf('month').startOf('week'); 
-            const today = moment();
-            // const startformatDay = startDay.format("YYYY-MM-DD");           
-            // console.log(startDay);  
             return(
                 <div className="row">
                     {/* TODO LISTA */}
@@ -81,8 +57,8 @@ export default class Home extends Component{
                     
                     <div className="container">
                         <h4>TODO List</h4>                    
-                            {this.state.items.map(item => ( <div className="row titlecontent"><div className="titlenote"> {item.noteTitle}<br></br>
-                            {(<span>{item.noteContent}</span>)}</div></div> ))}                  
+                            {/* {this.state.items.map(item => ( <div className="row titlecontent"><div className="titlenote"> {item.noteTitle}<br></br> */}
+                            {/* {(<span>{item.noteContent}</span>)}</div></div> ))}                   */}
                                                       
                         </div>                     
                     </div>                 
@@ -91,7 +67,12 @@ export default class Home extends Component{
                     <div className="col-md-5 kal">  
                     <ShadowWrapper> 
                         <TitleCalendarComponent></TitleCalendarComponent>
-                        <MonitorCalendar today={today}></MonitorCalendar>
+                        <MonitorCalendar 
+                            today={today}
+                            prevHandler={prevHandler}
+                            todayHandler={todayHandler}
+                            nextHandler={nextHandler}>
+                        </MonitorCalendar>
                         <CalendarGridComponent startDay={startDay} ></CalendarGridComponent>
                     </ShadowWrapper>
                     {/* <CalendarComponent value={this} 
@@ -130,7 +111,7 @@ export default class Home extends Component{
             <div className="auth-inner">
                 <h2> You are not logged in! </h2>
             </div>
-        )
-        
-    }
+        )       
+    
 }
+export {Home};

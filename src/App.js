@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
-import Home from './components/Home.component';
+import { Home } from './components/Home.component';
 import Nav from './components/Nav.component';
 import Login from './components/Login.component';
 import Register from './components/Register.component';

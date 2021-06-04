@@ -40,7 +40,7 @@
 
 .logout{
   position: relative;
-  right: -2550%;
+  right: -850%;
 }
 
 .navbar-brand{
@@ -49,6 +49,7 @@
 
 .row{
   padding-left: 8%;
+  padding-top: 10%;
 }
 
 .todo{

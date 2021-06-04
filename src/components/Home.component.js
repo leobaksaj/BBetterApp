@@ -73,7 +73,7 @@ function Home(props){
                             todayHandler={todayHandler}
                             nextHandler={nextHandler}>
                         </MonitorCalendar>
-                        <CalendarGridComponent startDay={startDay} ></CalendarGridComponent>
+                        <CalendarGridComponent startDay={startDay} today={today} ></CalendarGridComponent>
                     </ShadowWrapper>
                     {/* <CalendarComponent value={this} 
                         isMultiSelection={true}>

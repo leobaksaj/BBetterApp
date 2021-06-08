@@ -72,8 +72,3 @@ body,html, .App, #root, .auth-wrapper{
 .forgot-password a{
   color: #167bff;
 }
-
-.logout{
-  margin-right: -820%;
-  color: blue;
-}

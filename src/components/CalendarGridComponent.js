@@ -42,13 +42,17 @@ const CurrentDay = styled('div')`
   justify-content: center;
 `;
 
+const CalendarGridComponent = ({startDay,today,items}) => {
 
-const CalendarGridComponent = ({startDay,today}) => {
-
-    const totalDays = 42;
+    // const totalDays = 42;
     const day = startDay.clone().subtract(1, 'day');
-    const daysArray = [...Array(42)].map(() => day.add(1, 'day').clone());
-    // console.log(daysArray);
+    const daysArray = [...Array(42)].map(() => day.add(1, 'day').clone());   
+
+    function getDateFromCell(key){
+        const date11 = new Date(key * 1000).toISOString().slice(0,19).replace('T', ''); 
+        const date12 = date11.substring(0,10);      
+        return date12;
+    }
 
     const isCurrentDay = (day) => moment().isSame(day, 'day');
     const isSelectedMonth = (day) => today.isSame(day, 'month');
@@ -64,17 +68,18 @@ const CalendarGridComponent = ({startDay,today}) => {
             ))}
 
         </GridWrapper>
-        <GridWrapper>
-            {[...Array(7)].map(() => <CellWrapper isHeader/>)}
+        <GridWrapper >
+            {[...Array(7)].map(() => <CellWrapper  isHeader/>)}
             {
                 daysArray.map((dayItem) => (
                     <CellWrapper key={dayItem.unix()}
                                  isWeekday={dayItem.day() === 6 || dayItem.day() === 0}
                                  isSelectedMonth={(isSelectedMonth(dayItem))}>
-                        <RowInCell justifyContent ={'flex-end'}>
-                            <DayWrapper>
+                        <RowInCell  justifyContent ={'flex-end'}>
+                            <DayWrapper>                             
                                 {!isCurrentDay(dayItem) && dayItem.format('D')}
                                 {isCurrentDay(dayItem) && <CurrentDay> {dayItem.format('D')}</CurrentDay>}
+                                {items.map(item => (<div><br></br><br></br>{item.eventDate.substring(0,10) === getDateFromCell(dayItem.unix()+10000) ? item.eventTitle : ''}</div>))}
                             </DayWrapper>
                         </RowInCell>
                     </CellWrapper>
@@ -86,6 +91,3 @@ const CalendarGridComponent = ({startDay,today}) => {
 };
 
 export {CalendarGridComponent};
-
-
-

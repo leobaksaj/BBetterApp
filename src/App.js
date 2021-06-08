@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import { Home } from './components/Home.component';
+import { NotesComponent } from './components/NotesComponent';
 import Nav from './components/Nav.component';
 import Login from './components/Login.component';
 import Register from './components/Register.component';
@@ -44,6 +45,7 @@ require ('dotenv').config()
             <div className="notloged2">
               <Switch>
                 <Route exact path="/" component={() => <Home user={this.state.user}/>}/>
+                <Route exact path="/notes" component={() => <NotesComponent user={this.state.user}/>}/>
               </Switch>
               <div className="auth-innerlogin">
                 <Switch>

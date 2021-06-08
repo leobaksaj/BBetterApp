@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
 
+
 axios.defaults.baseURL = 'https://secret-temple-10001.herokuapp.com/bbetter';
 axios.defaults.headers.common['Authorization'] ='Bearer ' + localStorage.getItem('data');
 

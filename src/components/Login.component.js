@@ -23,7 +23,7 @@ export default class Login extends Component{
            this.props.setUser(res.data[0]);
         }).catch(e => {
             this.setState({
-                message: "Something is wrong. Try again! "
+                message: "Something is wrong. Try again!"
             })
         });
     }

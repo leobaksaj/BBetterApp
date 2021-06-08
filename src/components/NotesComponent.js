@@ -139,9 +139,9 @@ function NotesComponent(props){
         axios.get(`/notes/get/${id}`)
         .then(res =>  {
             setItems1(res.data);   
-            // console.log(items1.noteTitle);
+             console.log(items1.noteTitle);
          });
-         
+
 
     };
     const reload=()=>window.location.reload();

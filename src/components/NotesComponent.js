@@ -46,12 +46,16 @@ function NotesComponent(props){
                 noteArchived: false,
                 synced: 0
             })
-
-        }).catch(e => {
+        }).then(            
+            axios.get(`/notes/all/${d}`)
+            .then(res =>  {
+                setItems(res.data);   
+            })
+        ).catch(e => {
             setError({
             err: "Something is wrong. Try again!"
         })
-        alert(err.err);
+        alert(err);
         })
             
     };
@@ -85,6 +89,41 @@ function NotesComponent(props){
                     noteArchived: false,
                     synced: 3
                 })
+            }).then(            
+                axios.get(`/notes/all/${d}`)
+                .then(res =>  {
+                    setItems(res.data);   
+            }) 
+            )           
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+   
+    function updateNote(id){
+        console.log(id);
+
+        axios.get(`/notes/get/${id}`)
+        .then(res =>  {
+            setItems1(res.data);   
+            console.log(items1.noteTitle);
+         })
+        axios.put(`/notes/put/${id}`,{
+            userId: d,
+            noteTitle: note.noteTitle,
+            noteContent: note.noteContent,
+            noteArchived: false,
+            synced: 0
+        })
+        .then(res => {
+                console.log(res.data);
+                setNotes({
+                    userId: d,
+                    noteTitle: items1.noteTitle,
+                    noteContent: items1.noteContent,
+                    noteArchived: false,
+                    synced: 0
+                })
                 let d = localStorage.getItem('data');
                 axios.get(`/notes/all/${d}`)
                 .then(res =>  {
@@ -95,63 +134,26 @@ function NotesComponent(props){
                 console.log(err);
             });
     }
-   
-    function updateNote(id){
-        console.log(id);
-
-        // axios.get(`/notes/get/${id}`)
-        // .then(res =>  {
-        //     setItems1(res.data);   
-        //     console.log(items1.noteTitle);
-        //  })
-        // axios.put(`/notes/put/${id}`,{
-        //     userId: d,
-        //     noteTitle: note.noteTitle,
-        //     noteContent: note.noteContent,
-        //     noteArchived: false,
-        //     synced: 0
-        // })
-        // .then(res => {
-        //         console.log(res.data);
-        //         setNotes({
-        //             userId: d,
-        //             noteTitle: items1.noteTitle,
-        //             noteContent: items1.noteContent,
-        //             noteArchived: false,
-        //             synced: 0
-        //         })
-        //         let d = localStorage.getItem('data');
-        //         axios.get(`/notes/all/${d}`)
-        //         .then(res =>  {
-        //             setItems(res.data);   
-        //         });
-        //     })            
-        //     .catch((err) => {
-        //         console.log(err);
-        //     });
-    }
+    /************ MODALS ****************** */
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
-    function handleShow(id){
-        setShow(true);
-        console.log(id);
+
+    function handleShow(id){    
+        setShow(true);            
         axios.get(`/notes/get/${id}`)
         .then(res =>  {
-            setItems1(res.data);   
-             console.log(items1.noteTitle);
-         });
-
-
+            setItems1(res.data);                       
+         })      
+        // console.log(items1.noteTitle) 
     };
     const reload=()=>window.location.reload();
 
     function handleChange(e){
         const newnote = {...note };
         newnote[e.target.name] = e.target.value;
-        //setNotes(newnote);
+        // setNotes(newnote);
      }
-
     
     if(props.user){  
              
@@ -196,7 +198,7 @@ function NotesComponent(props){
                         </div>
                     </div>
             </div>
-                <Modal show={show} onHide={handleClose} onExit={reload}>
+                <Modal show={show} onHide={handleClose}>
                     <Modal.Header closeButton>
                     <Modal.Title>Update note</Modal.Title>
                     </Modal.Header>
@@ -204,11 +206,11 @@ function NotesComponent(props){
                         <form>
                             <div className="form-group">
                                 <label>Naslov bilješke</label>
-                                <input onChange={(e) => handle(e)} value={note.noteTitle} id="noteTitle" type="text" className="form-control" placeholder="Title"></input>
+                                <input onChange={(e) => handleChange(e)} value={items.noteTitle} id="noteTitle" type="text" className="form-control" placeholder="Title"></input>
                             </div>   
                             <div className="form-group">
                                 <label>Obilježi svoj dan</label>
-                                <textarea onChange={(e) => handle(e)} value={note.noteContent} id="noteContent" className="form-control" type="text"  rows="12" ></textarea>
+                                <textarea onChange={(e) => handleChange(e)} value={items.noteContent} id="noteContent" className="form-control" type="text"  rows="12" ></textarea>
                             </div>                                
                         </form>                 
                     </Modal.Body>

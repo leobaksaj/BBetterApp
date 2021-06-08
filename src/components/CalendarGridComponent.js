@@ -79,7 +79,7 @@ const CalendarGridComponent = ({startDay,today,items}) => {
                             <DayWrapper>                             
                                 {!isCurrentDay(dayItem) && dayItem.format('D')}
                                 {isCurrentDay(dayItem) && <CurrentDay> {dayItem.format('D')}</CurrentDay>}
-                                {items.map(item => (<div><br></br><br></br>{item.eventDate.substring(0,10) === getDateFromCell(dayItem.unix()+10000) ? item.eventTitle : ''}</div>))}
+                                {items.map(item => (<div><br></br><br></br>{item.eventDate/*.substring(0,10) === getDateFromCell(dayItem.unix()+10000)*/ ? item.eventTitle : ''}</div>))}
                             </DayWrapper>
                         </RowInCell>
                     </CellWrapper>

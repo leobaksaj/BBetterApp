@@ -7,6 +7,8 @@ import { CalendarGridComponent } from './CalendarGridComponent';
 import BtnTimerComponent from './BtnTimerComponent';
 import DisplayTimerComponent from './DisplayTimerComponent';
 import styled from "styled-components";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 const ShadowWrapper = styled('div')`
   border-top: 1px solid #737374;
@@ -20,8 +22,10 @@ const ShadowWrapper = styled('div')`
 
 function Home(props){
 
+    let d = localStorage.getItem('data');  
     ////////// KALENDAR ////////////////
     const [items, setItems] = useState([]); 
+    const [items1, setItems1] = useState(); 
                 
         window.moment =  moment;     
         moment.updateLocale('en', {week:{dow:1}}); 
@@ -29,7 +33,7 @@ function Home(props){
         const startDay = today.clone().startOf('month').startOf('week'); 
 
         useEffect(() => {
-            let d = localStorage.getItem('data');
+            // let d = localStorage.getItem('data');
             axios.get(`/events/all/${d}`)
             .then(res =>  {
                 setItems(res.data);   
@@ -81,7 +85,57 @@ function Home(props){
         setTime({ms:0, s:0, m:0, h:0})
       };
     
-      const resume = () => start();    
+      const resume = () => start();   
+      /************** DELETEE TODO ********************** */
+
+      const [event, setEvents] = useState({
+        userId: d,
+        eventTitle: "",
+        eventDetails: "",
+        eventDate: "",            
+        eventType: 1,
+        eventChecked: false,
+        synced: 0
+    });
+
+    function deleteEvents(id){
+      console.log(id)
+
+      axios.get(`/events/get/${id}`)
+      .then(res =>  {
+          setItems1(res.data);   
+          // console.log(items1.noteTitle);
+        })
+      axios.put(`/events/put/${id}`,{
+          userId: d,
+          eventTitle:  "qa",
+          eventDetails:  "qa",
+          eventDate:  "12",            
+          eventType: 1,
+          eventChecked: false,
+          synced: 3
+      })
+      .then(res => {
+              console.log(res.data);
+              setEvents({
+                userId: d,
+                eventTitle:  items1.eventTitle,
+                eventDetails:  items1.eventDetails,
+                eventDate:  items1.eventDate,            
+                eventType: 1,
+                eventChecked: false,
+                synced: 3
+              })
+          }).then(            
+            axios.get(`/events/all/${d}`)
+            .then(res =>  {
+                setItems(res.data)  
+            })
+          )           
+          .catch((err) => {
+              console.log(err);
+          });
+    }
         
         if(props.user){   
                 
@@ -96,8 +150,20 @@ function Home(props){
                     
                     <div className="container">
                         <h4>TODO List</h4>                    
-                            {items.map(item => ( <div className="row titlecontent"><div className="titlenote"> {item.eventTitle}<br></br> 
-                            {(<span>{item.eventDetails}</span>)}</div></div> ))}          
+                            {items.filter(item => item.synced !== 3).map(item => ( 
+                            <>
+                              <div className="row titlecontent">
+                                <div className="titlenote">
+                                  <div className="row buttoninnotes">
+                                    <button className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faEdit} /></button> 
+                                    <button onClick={() => deleteEvents(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
+                                    </div>
+                                    <p>{item.eventTitle}</p>
+                              {(<span>{item.eventDetails}</span>)}
+                              </div>
+                            </div>
+               
+                          </>))}          
                                                       
                         </div>                     
                     </div>                 

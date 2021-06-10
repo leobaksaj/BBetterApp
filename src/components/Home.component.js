@@ -126,7 +126,7 @@ function Home(props){
                 eventChecked: false,
                 synced: 3
               })
-          }).then(            
+          }).then(             
             axios.get(`/events/all/${d}`)
             .then(res =>  {
                 setItems(res.data)  
@@ -137,6 +137,15 @@ function Home(props){
           });
     }
         
+    /************ TAB KONTROLE    ******************** */
+
+    const [toggleState, setToggleState] = useState(1);
+
+    const toggleTab = (index) => {
+      setToggleState(index);
+      // console.log(index);
+    };
+
         if(props.user){   
                 
             const prevHandler = () =>  setToday(prev => prev.clone().subtract(1, 'month'));   //this.state.setToday.clone().subtract(1, 'month');    
@@ -149,22 +158,87 @@ function Home(props){
                     <div className="todo col-md-3">
                     
                     <div className="container">
-                        <h4>TODO List</h4>                    
-                            {items.filter(item => item.synced !== 3).map(item => ( 
+                      <div className="tab">
+                        <div className="bloc-tabs">
+                          <button className={toggleState === 1 ? "tabs active-tabs" : "tabs"}  onClick={() => toggleTab(1)}>Todo</button>
+                          <button className={toggleState === 2 ? "tabs active-tabs" : "tabs"}  onClick={() => toggleTab(2)}>Remainder</button>
+                          <button className={toggleState === 3 ? "tabs active-tabs" : "tabs"}  onClick={() => toggleTab(3)}>Event</button>
+                          <button className={toggleState === 4 ? "tabs active-tabs" : "tabs"}  onClick={() => toggleTab(4)}>All</button>
+                        </div>
+                      </div>
+                      <div className="content-tabs">
+                        <div className={toggleState === 1 ? "content  active-content" : "content"}>
+                        <h4>Todo</h4>                    
+                            {items.filter(item => item.synced !== 3 && item.eventType === 1).map(item => ( 
                             <>
                               <div className="row titlecontent">
                                 <div className="titlenote">
                                   <div className="row buttoninnotes">
                                     <button className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faEdit} /></button> 
-                                    <button onClick={() => deleteEvents(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
+                                    <button onClick={() => deleteEvents(item._id)} className="btn btn-danger NotesBtn">
+                                      <FontAwesomeIcon icon={faTrash} /></button>
                                     </div>
                                     <p>{item.eventTitle}</p>
                               {(<span>{item.eventDetails}</span>)}
                               </div>
                             </div>
                
-                          </>))}          
-                                                      
+                          </>))}  
+                          </div>
+
+                          <div className={toggleState === 2 ? "content  active-content" : "content"}>
+                            <h4>Remainder</h4>                    
+                                {items.filter(item => item.synced !== 3 && item.eventType === 2).map(item => ( 
+                                <>
+                                  <div className="row titlecontent">
+                                    <div className="titlenote">
+                                      <div className="row buttoninnotes">
+                                        <button className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faEdit} /></button> 
+                                        <button onClick={() => deleteEvents(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
+                                        </div>
+                                        <p>{item.eventTitle}</p>
+                                  {(<span>{item.eventDetails}</span>)}
+                                  </div>
+                                </div>               
+                          </>))}  
+                          </div>
+
+                          <div className={toggleState === 3 ? "content  active-content" : "content"}>
+                            <h4>Event</h4>                    
+                                {items.filter(item => item.synced !== 3 && item.eventType === 3).map(item => ( 
+                                <>
+                                  <div className="row titlecontent">
+                                    <div className="titlenote">
+                                      <div className="row buttoninnotes">
+                                        <button className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faEdit} /></button> 
+                                        <button onClick={() => deleteEvents(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
+                                        </div>
+                                        <p>{item.eventTitle}</p>
+                                  {(<span>{item.eventDetails}</span>)}
+                                  </div>
+                                </div>
+                  
+                              </>))}  
+                              </div>
+
+                              <div className={toggleState === 4 ? "content  active-content" : "content"}>
+                            <h4>All</h4>                    
+                                {items.filter(item => item.synced !== 3).map(item => ( 
+                                <>
+                                  <div className="row titlecontent">
+                                    <div className="titlenote">
+                                      <div className="row buttoninnotes">
+                                        <button className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faEdit} /></button> 
+                                        <button onClick={() => deleteEvents(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
+                                        </div>
+                                        <p>{item.eventTitle}</p>
+                                  {(<span>{item.eventDetails}</span>)}
+                                  </div>
+                                </div>
+                  
+                              </>))}  
+                              </div>
+                        </div>                                                    
                         </div>                     
                     </div>                 
 

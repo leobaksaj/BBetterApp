@@ -1,6 +1,11 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import moment from "moment";
+import axios from 'axios';
 import styled from 'styled-components';
+import {Button} from 'react-bootstrap';
+import {Modal} from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 const GridWrapper = styled.div`
 	display: grid;
@@ -44,16 +49,99 @@ const CurrentDay = styled('div')`
 
 const CalendarGridComponent = ({startDay,today,items}) => {
 
+    let d = localStorage.getItem('data'); 
     // const totalDays = 42;
     const day = startDay.clone().subtract(1, 'day');
     const daysArray = [...Array(42)].map(() => day.add(1, 'day').clone());   
 
     function getDateFromCell(key){
         const date11 = new Date(key * 1000).toISOString().slice(0,19).replace('T', ''); 
-        const date12 = date11.substring(0,10);      
+        const date12 = date11.substring(0,10);    
+        // console.log(date12);  
         return date12;
     }
 
+    function parseDateYYYYMMDD(key){ 
+        const date = key.substring(0,10);    
+        const yyyy = date.substring(6,10);
+        const mm = date.substring(3,5);
+        const dd = date.substring(0,2);
+        const date11 = yyyy +"-"+mm+"-"+dd;
+        // console.log(date11);  
+        return date11;
+    }
+    const [err, setError] = useState();    
+
+    const [event, setEvents] = useState({
+        userId: d,
+        eventTitle: "",
+        eventDetails: "",
+        eventDate: "",            
+        eventType: 0,
+        eventChecked: false,
+        synced: 0
+    });
+
+    const [curdate, setCurrDate] = useState();
+
+    const clickCell = (key) =>{
+        const date = new Date(key * 1000).toISOString().slice(0,19).replace('T', ''); 
+        const date12 = date.substring(0,10);   
+        const yyyy = date12.substring(0,4);
+        const mm = date12.substring(5,7);
+        const dd = date12.substring(8,10);
+        const date11 = dd +"."+mm+"."+yyyy ;     
+        setCurrDate(date11);        
+        handleShow();             
+    }
+
+    function submit(e){      
+        e.preventDefault();
+        axios.post('/events/new',{
+            userId: d,
+            eventTitle: event.eventTitle,
+            eventDetails: event.eventDetails,
+            eventDate: curdate +" at "+ event.eventDate,            
+            eventType: event.eventType,
+            eventChecked: false,
+            synced: 0
+        })
+        .then(res =>{
+            console.log(res);
+            setEvents({
+                userId: d,
+                eventTitle: "",
+                eventDetails: "",
+                eventDate: "",            
+                eventType: 0,
+                eventChecked: false,
+                synced: 0
+            })
+            handleClose();
+        })
+        .catch(e => {
+            setError({
+            err: "Something is wrong. Try again!"
+        })
+        console.log(err);
+        })
+            
+    };
+    function handle(e){
+        const newevent = {...event };
+        newevent[e.target.id] = e.target.value;
+        setEvents(newevent);
+    }
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+
+    function handleShow(){    
+        setShow(true);             
+    };
+    const reload=()=>window.location.reload();
+  
+    let rbr = 0;
     const isCurrentDay = (day) => moment().isSame(day, 'day');
     const isSelectedMonth = (day) => today.isSame(day, 'month');
     return(
@@ -72,20 +160,58 @@ const CalendarGridComponent = ({startDay,today,items}) => {
             {[...Array(7)].map(() => <CellWrapper  isHeader/>)}
             {
                 daysArray.map((dayItem) => (
-                    <CellWrapper key={dayItem.unix()}
+                    <CellWrapper key={dayItem.unix()}   
+                    onClick={() => {clickCell(dayItem.unix()+10000)}}                             
                                  isWeekday={dayItem.day() === 6 || dayItem.day() === 0}
                                  isSelectedMonth={(isSelectedMonth(dayItem))}>
-                        <RowInCell  justifyContent ={'flex-end'}>
+                        <RowInCell justifyContent ={'flex-end'}>
                             <DayWrapper>                             
                                 {!isCurrentDay(dayItem) && dayItem.format('D')}
                                 {isCurrentDay(dayItem) && <CurrentDay> {dayItem.format('D')}</CurrentDay>}
-                                {items.map(item => (<div><br></br><br></br>{item.eventDate/*.substring(0,10) === getDateFromCell(dayItem.unix()+10000)*/ ? item.eventTitle : ''}</div>))}
+                                {items.map(item => (<div><br></br><br></br>
+                                {parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000) ? rbr = rbr+1 : ''}</div>))}
                             </DayWrapper>
                         </RowInCell>
                     </CellWrapper>
                 ))
             }
         </GridWrapper>
+
+        <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+        <Modal.Title>Save new event</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>                       
+            <form onSubmit={(e)=> submit(e)}>
+                <div className="form-group">
+                    <label>Title</label>
+                    <input onChange={(e) => handle(e)} value={event.eventTitle} id="eventTitle" type="text" className="form-control" placeholder="Title"></input>
+                </div>   
+                <div className="form-group">
+                    <label>Content</label>
+                    <textarea onChange={(e) => handle(e)} value={event.eventDetails} id="eventDetails" className="form-control" type="text"  rows="3" ></textarea>
+                </div>  
+                <div className="form-group">
+                    <input onChange={(e) => handle(e)} type="checkbox" id="eventType" name="event" value={1}/> <label for="event"> Event</label><br></br>
+                    <input onChange={(e) => handle(e)} type="checkbox" id="eventType" name="reminder" value={2}/> <label for="reminder"> Reminder</label><br></br>
+                    <input onChange={(e) => handle(e)} type="checkbox" id="eventType" name="todo" value={3}/> <label for="todo"> TODO</label><br></br>
+                </div> 
+                <div>
+                    <input onChange={(e) => handle(e)} value={event.eventDate} type="time"  id="eventDate" name="eventDate" required/>
+                </div>
+                 <hr></hr>
+                <div className="row">
+                    <div className="col-xs-12">
+                        <div className="text-right">
+                            <button className="btn btn-primary saveEventBtn">Save event</button>
+                            <button onClick={handleClose}  className="btn btn-danger saveEventBtn">Close</button>
+                        </div>
+                    </div>      
+                </div> 
+            </form>                 
+        </Modal.Body>
+    </Modal>
+
         </>
     );
 };

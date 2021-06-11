@@ -141,10 +141,13 @@ const CalendarGridComponent = ({startDay,today,items}) => {
     };
     const reload=()=>window.location.reload();
   
-    let rbr = 0;
     const isCurrentDay = (day) => moment().isSame(day, 'day');
     const isSelectedMonth = (day) => today.isSame(day, 'month');
-    return(
+
+  
+    let numrow =0;
+    
+    return(        
         <>      
         <GridWrapper isHeader>
             {[...Array(7)].map((_,i)=> (
@@ -159,7 +162,7 @@ const CalendarGridComponent = ({startDay,today,items}) => {
         <GridWrapper >
             {[...Array(7)].map(() => <CellWrapper  isHeader/>)}
             {
-                daysArray.map((dayItem) => (
+                daysArray.map((dayItem) => ( 
                     <CellWrapper key={dayItem.unix()}   
                     onClick={() => {clickCell(dayItem.unix()+10000)}}                             
                                  isWeekday={dayItem.day() === 6 || dayItem.day() === 0}
@@ -167,15 +170,23 @@ const CalendarGridComponent = ({startDay,today,items}) => {
                         <RowInCell justifyContent ={'flex-end'}>
                             <DayWrapper>                             
                                 {!isCurrentDay(dayItem) && dayItem.format('D')}
-                                {isCurrentDay(dayItem) && <CurrentDay> {dayItem.format('D')}</CurrentDay>}
-                                {items.map(item => (<div><br></br><br></br>
-                                {parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000) ? rbr = rbr+1 : ''}</div>))}
-                            </DayWrapper>
-                        </RowInCell>
+                                {isCurrentDay(dayItem) && <CurrentDay> {dayItem.format('D')}</CurrentDay>}                                                    
+                                {/* {items.map(item => (<div><br></br><br></br>
+                                {parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000) ? "" : ''}</div>))} */}
+                            </DayWrapper>                           
+                        </RowInCell>           
+                            {items.filter(item => (item.synced !== 3) && (parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000))).map(
+                            item => { let rbr = 0;
+                                if (item.synced !== 3) {                                          
+                                    rbr = rbr+1;
+                                return <p className="counter">{ rbr }</p> 
+                            }}
+                        )}                
                     </CellWrapper>
                 ))
             }
         </GridWrapper>
+
 
         <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>

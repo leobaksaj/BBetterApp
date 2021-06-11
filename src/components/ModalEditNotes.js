@@ -1,59 +1,56 @@
-import React, { Component } from 'react';
+import React from "react";
 
-export class Modal extends Component {
-    constructor(props) {
-        super(props);
-        this.handleSave = this.handleSave.bind(this);
-        this.state = {
-            title: '',
-            msg: '',
-        }
-    }
+class EditContact extends React.Component {
+  constructor(props) {
+    super(props);
+    const { id, name, email } = props.location.state.contact;
+    this.state = {
+      id,
+      name,
+      email,
+    };
+  }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            title: nextProps.title,
-            msg: nextProps.msg,
-        });
+  update = (e) => {
+    e.preventDefault();
+    if (this.state.name === "" || this.state.email === "") {
+      alert("ALl the fields are mandatory!");
+      return;
     }
-
-    titleHandler(e) {
-        this.setState({ title: e.target.value });
-    }
-
-    msgHandler(e) {
-        this.setState({ msg: e.target.value });
-    }
-
-    handleSave() {
-        const item = this.state;
-        this.props.saveModalDetails(item)
-    }
-
-    render() {
-        return (
-            <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Edit Jewel</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div className="modal-body">
-                            <p><span className="modal-lable">Title:</span><input value={this.state.title} onChange={(e) => this.titleHandler(e)} /></p>
-                            <p><span className="modal-lable">Msg:</span><input value={this.state.msg} onChange={(e) => this.msgHandler(e)} /></p>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={() => { this.handleSave() }}>Save changes</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    this.props.updateContactHandler(this.state);
+    this.setState({ name: "", email: "" });
+    this.props.history.push("/");
+  };
+  render() {
+    return (
+      <div className="ui main">
+        <h2>Edit Contact</h2>
+        <form className="ui form" onSubmit={this.update}>
+          <div className="field">
+            <label>Name</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={this.state.name}
+              onChange={(e) => this.setState({ name: e.target.value })}
+            />
+          </div>
+          <div className="field">
+            <label>Email</label>
+            <input
+              type="text"
+              name="email"
+              placeholder="Email"
+              value={this.state.email}
+              onChange={(e) => this.setState({ email: e.target.value })}
+            />
+          </div>
+          <button className="ui button blue">Update</button>
+        </form>
+      </div>
+    );
+  }
 }
 
-export default {Modal};
+export default EditContact;

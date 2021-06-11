@@ -28,6 +28,7 @@ function NotesComponent(props){
         synced: 0
     })
 
+   
     function submit(e){      
         e.preventDefault();
         axios.post('/notes/new',{
@@ -100,15 +101,32 @@ function NotesComponent(props){
             });
     }
    
-    function updateNote(id){
-        console.log(id);
+    function parseDateDDMMYYYY(key){ 
+        const date = key;    
+        const yyyy = date.substring(0,4);
+        const mm = date.substring(5,7);
+        const dd = date.substring(8,10);
+        const date11 =dd+"."+mm+"."+yyyy;
+        // console.log(date11);  
+        return date11;
+    }
 
-        axios.get(`/notes/get/${id}`)
-        .then(res =>  {
-            setItems1(res.data);   
-            console.log(items1.noteTitle);
-         })
-        axios.put(`/notes/put/${id}`,{
+    function submitUpdate(e){      
+        e.preventDefault();
+        setNotes({
+            userId: d,
+            noteTitle: "",
+            noteContent: "",
+            noteArchived: false,
+            synced: 0
+        });
+        updateNote(note);
+        // console.log(note);         
+    };
+
+    function updateNote(note1){
+        // console.log(note1._id);
+        axios.put(`/notes/put/${note1._id}`,{
             userId: d,
             noteTitle: note.noteTitle,
             noteContent: note.noteContent,
@@ -116,24 +134,27 @@ function NotesComponent(props){
             synced: 0
         })
         .then(res => {
-                console.log(res.data);
-                setNotes({
-                    userId: d,
-                    noteTitle: items1.noteTitle,
-                    noteContent: items1.noteContent,
-                    noteArchived: false,
-                    synced: 0
-                })
-                let d = localStorage.getItem('data');
-                axios.get(`/notes/all/${d}`)
-                .then(res =>  {
-                    setItems(res.data);   
-                });
+            console.log(res.data);
+            setNotes({
+                userId: d,
+                noteTitle: items.noteTitle,
+                noteContent: items.noteContent,
+                noteArchived: false,
+                synced: 0
+            })
+            let d = localStorage.getItem('data');
+            axios.get(`/notes/all/${d}`)
+            .then(res =>  {
+                setItems(res.data);   
+            });
             })            
             .catch((err) => {
                 console.log(err);
             });
     }
+
+ 
+
     /************ MODALS ****************** */
     const [show, setShow] = useState(false);
 
@@ -143,16 +164,18 @@ function NotesComponent(props){
         setShow(true);            
         axios.get(`/notes/get/${id}`)
         .then(res =>  {
-            setItems1(res.data);                       
+            setNotes(res.data);
+            // console.log(res.data)                   
          })      
-        // console.log(items1.noteTitle) 
+        //  console.log(note.noteTitle) 
+         
     };
     const reload=()=>window.location.reload();
 
     function handleChange(e){
         const newnote = {...note };
         newnote[e.target.name] = e.target.value;
-        // setNotes(newnote);
+        setNotes(newnote);
      }
     
     if(props.user){  
@@ -160,7 +183,7 @@ function NotesComponent(props){
         return(  
             <>         
             <div className="row mainrow">
-                    <div className="todo col-md-3">
+                    <div className="todo col-md-4">
                         <h1>Notes</h1>
                         <div className="container">                 
                             {items.filter(item => item.synced !== 3).map(item => (<><div className="row titlecontentNotes">
@@ -170,12 +193,13 @@ function NotesComponent(props){
                                         <button onClick={() => deleteNotes(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
                                     </div>
                                     <p value={item.noteTitle} id="noteTitle">{item.noteTitle}</p>
-                                    {(<span>{item.createdAt.substring(0,10)}</span>)}
+                                    {(<span>{parseDateDDMMYYYY(item.createdAt.substring(0,10))}</span>)}
+                                    <p>{item.noteContent}</p>
                                 </div>                                
                             </div> </>))}                                                            
                         </div>   
                     </div>
-                    <div className="todo col-md-8 notes">
+                    <div className="todo col-md-7 notes">
                         <h3>Ovdje opišite svoj dan!</h3>
                         <div className="container">
                             <form onSubmit={(e)=> submit(e)}>
@@ -203,25 +227,22 @@ function NotesComponent(props){
                     <Modal.Title>Update note</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>                       
-                        <form>
+                        <form onSubmit={(e)=> submitUpdate(e)}>
                             <div className="form-group">
                                 <label>Naslov bilješke</label>
-                                <input onChange={(e) => handleChange(e)} value={items.noteTitle} id="noteTitle" type="text" className="form-control" placeholder="Title"></input>
+                                <input onChange={(e) => handleChange(e)} value={note.noteTitle} name="noteTitle" type="text" className="form-control" placeholder="Title"></input>
+                                {/* <input onChange={(e) => handleChange(e)} value={note._id}  name="_id" type="text" className="form-control" ></input>
+                                <input onChange={(e) => handleChange(e)} value={note.noteArchived}  name="noteArchived" type="boolean" className="form-control" ></input>
+                                <input onChange={(e) => handleChange(e)} value={note.synced}  name="synced" type="number" className="form-control" ></input> */}
                             </div>   
                             <div className="form-group">
                                 <label>Obilježi svoj dan</label>
-                                <textarea onChange={(e) => handleChange(e)} value={items.noteContent} id="noteContent" className="form-control" type="text"  rows="12" ></textarea>
-                            </div>                                
+                                <textarea onChange={(e) => handleChange(e)} value={note.noteContent} name="noteContent" className="form-control" type="text"  rows="12" ></textarea>
+                            </div> 
+                            <button onClick={handleClose} className="btn btn-danger NotesBtn">Close</button>                               
+                            <button className="btn btn-primary">Update</button>                               
                         </form>                 
                     </Modal.Body>
-                    <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={handleClose}>
-                        Save Changes
-                    </Button>
-                    </Modal.Footer>
                 </Modal>
             </>
 

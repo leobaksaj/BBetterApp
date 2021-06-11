@@ -11,7 +11,14 @@
 
 .mainrow{
   padding-left: 10rem;
+  padding-top: 0px;
   width: 100%;
+  height: 100%;
+}
+
+.auth-wrapper{
+  margin-top: auto;
+  padding-top: 90px;
 }
 
 .todo{
@@ -59,11 +66,23 @@
   margin: 0.2%;
 }
 
+.counter{
+  background-color: blue;
+  border-radius: 15px;
+  margin-left: 35px;
+  margin-top: 0px;
+  text-align: center;
+  max-width: 25px;
+}
+
   /* TODO LISTAAAA */
 
-.titlenote{
+.titlenote p{
   font-weight: bold;
   font-size: 18px;
+  display: block;
+  width: 100%;
+  padding-top: 5px;
 }
 
 .titlecontent{
@@ -168,7 +187,7 @@
   border-radius: 15px;
   margin-bottom: 3%;
   float: left;
-  width: 112%;
+  width: 106%;
 }
 
 .NotesBtn{

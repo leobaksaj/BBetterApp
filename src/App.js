@@ -47,7 +47,7 @@ require ('dotenv').config()
                 <Route exact path="/" component={() => <Home user={this.state.user}/>}/>
                 <Route exact path="/notes" component={() => <NotesComponent user={this.state.user}/>}/>
               </Switch>
-              <div className="auth-innerlogin">
+              <div className={this.state.user === true ? "auth-inner" : ""}>
                 <Switch>
                     <Route exact path="/login" component={() => <Login setUser={this.setUser} />}/>
                     <Route exact path="/register" component={Register}/>

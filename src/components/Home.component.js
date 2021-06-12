@@ -178,9 +178,8 @@ function Home(props){
                                     <button onClick={() => deleteEvents(item._id)} className="btn btn-danger NotesBtn">
                                       <FontAwesomeIcon icon={faTrash} /></button>
                                     </div>                                    
-                                        {item.eventTitle}                               
+                                        <p>{item.eventTitle}</p>                               
                                         <p>{item.eventDate}</p>                                                                       
-                              {(<span>{item.eventDetails}</span>)}
                               </div>
                             </div>
                
@@ -197,9 +196,8 @@ function Home(props){
                                         <button className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faEdit} /></button> 
                                         <button onClick={() => deleteEvents(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
                                         </div>
-                                        {item.eventTitle}
+                                        <p>{item.eventTitle}</p>   
                                         <p>{item.eventDate}</p> 
-                                  {(<span>{item.eventDetails}</span>)}
                                   </div>
                                 </div>               
                           </>))}  
@@ -215,9 +213,8 @@ function Home(props){
                                         <button className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faEdit} /></button> 
                                         <button onClick={() => deleteEvents(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
                                         </div>
-                                        {item.eventTitle}
+                                        <p>{item.eventTitle}</p>   
                                         <p>{item.eventDate}</p> 
-                                  {(<span>{item.eventDetails}</span>)}
                                   </div>
                                 </div>
                   
@@ -234,9 +231,8 @@ function Home(props){
                                         <button className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faEdit} /></button> 
                                         <button onClick={() => deleteEvents(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
                                         </div>
-                                        {item.eventTitle}
+                                        <p>{item.eventTitle}</p>   
                                         <p>{item.eventDate}</p> 
-                                  {(<span>{item.eventDetails}</span>)}
                                   </div>
                                 </div>
                   
@@ -275,12 +271,13 @@ function Home(props){
                 </div>                               
             </div>          
             )
-        }
+        }else{
         return(
             <div className="auth-inner">
                 <h2> You are not logged in! </h2>
             </div>
-        )       
+        ) 
+        }     
     
 }
 export {Home};

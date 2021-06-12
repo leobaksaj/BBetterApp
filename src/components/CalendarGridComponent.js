@@ -100,7 +100,7 @@ const CalendarGridComponent = ({startDay,today,items}) => {
         axios.post('/events/new',{
             userId: d,
             eventTitle: event.eventTitle,
-            eventDetails: event.eventDetails,
+            eventDetails: "event.eventDetails",
             eventDate: curdate +" at "+ event.eventDate,            
             eventType: event.eventType,
             eventChecked: false,
@@ -111,7 +111,7 @@ const CalendarGridComponent = ({startDay,today,items}) => {
             setEvents({
                 userId: d,
                 eventTitle: "",
-                eventDetails: "",
+                eventDetails: "event.eventDetails",
                 eventDate: "",            
                 eventType: 0,
                 eventChecked: false,
@@ -175,13 +175,10 @@ const CalendarGridComponent = ({startDay,today,items}) => {
                                 {parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000) ? "" : ''}</div>))} */}
                             </DayWrapper>                           
                         </RowInCell>           
-                            {items.filter(item => (item.synced !== 3) && (parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000))).map(
-                            item => { let rbr = 0;
-                                if (item.synced !== 3) {                                          
-                                    rbr = rbr+1;
-                                return <p className="counter">{ rbr }</p> 
-                            }}
-                        )}                
+                            <p className={items.filter(item => (item.synced !== 3)
+                             && (parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000))).length == 0 ? "counter0" : "counter" }>
+                             {items.filter(item => (item.synced !== 3)
+                             && (parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000))).length}</p>             
                     </CellWrapper>
                 ))
             }
@@ -198,10 +195,10 @@ const CalendarGridComponent = ({startDay,today,items}) => {
                     <label>Title</label>
                     <input onChange={(e) => handle(e)} value={event.eventTitle} id="eventTitle" type="text" className="form-control" placeholder="Title"></input>
                 </div>   
-                <div className="form-group">
+                {/* <div className="form-group">
                     <label>Content</label>
                     <textarea onChange={(e) => handle(e)} value={event.eventDetails} id="eventDetails" className="form-control" type="text"  rows="3" ></textarea>
-                </div>  
+                </div>   */}<br></br>
                 <div className="form-group">
                     <input onChange={(e) => handle(e)} type="checkbox" id="eventType" name="event" value={1}/> <label for="event"> Event</label><br></br>
                     <input onChange={(e) => handle(e)} type="checkbox" id="eventType" name="reminder" value={2}/> <label for="reminder"> Reminder</label><br></br>

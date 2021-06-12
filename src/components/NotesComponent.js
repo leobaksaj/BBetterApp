@@ -111,6 +111,14 @@ function NotesComponent(props){
         return date11;
     }
 
+    function parseDateYYYYMMDD(key){ 
+        var dd = today.getFullYear();
+        var mm = today.getMonth()+1;
+        var yyyy = today.getDate();
+        var mm1 = mm < 10 ? '0'+mm : mm;
+        const date =dd+"-"+mm1+"-"+yyyy;      
+        return date;
+    }
     function submitUpdate(e){      
         e.preventDefault();
         setNotes({
@@ -141,16 +149,17 @@ function NotesComponent(props){
                 noteContent: items.noteContent,
                 noteArchived: false,
                 synced: 0
-            })
-            let d = localStorage.getItem('data');
+            });
             axios.get(`/notes/all/${d}`)
             .then(res =>  {
                 setItems(res.data);   
             });
+            handleClose();
             })            
             .catch((err) => {
                 console.log(err);
             });
+
     }
 
  
@@ -168,7 +177,6 @@ function NotesComponent(props){
             // console.log(res.data)                   
          })      
         //  console.log(note.noteTitle) 
-         
     };
     const reload=()=>window.location.reload();
 
@@ -177,38 +185,107 @@ function NotesComponent(props){
         newnote[e.target.name] = e.target.value;
         setNotes(newnote);
      }
-    
+
+     /********** TAB KONTROLE   ************* */
+     const [toggleState, setToggleState] = useState(1);
+
+     const toggleTab = (index) => {
+       setToggleState(index);
+       // console.log(index);
+     };
+     var today = new Date();
+     const [searchTerm, setSearchTerm] = useState("")
+      
     if(props.user){  
              
         return(  
             <>         
             <div className="row mainrow">
-                    <div className="todo col-md-4">
-                        <h1>Notes</h1>
-                        <div className="container">                 
-                            {items.filter(item => item.synced !== 3).map(item => (<><div className="row titlecontentNotes">
-                                <div className="titlenote">
-                                    <div className="row buttoninnotes">
-                                        <button onClick={() => handleShow(item._id)} className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faEdit} /></button> 
-                                        <button onClick={() => deleteNotes(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
-                                    </div>
-                                    <p value={item.noteTitle} id="noteTitle">{item.noteTitle}</p>
-                                    {(<span>{parseDateDDMMYYYY(item.createdAt.substring(0,10))}</span>)}
-                                    <p>{item.noteContent}</p>
-                                </div>                                
-                            </div> </>))}                                                            
-                        </div>   
+             <div className="todo col-md-4">
+                <div className="container">
+                    <div className="tab">
+                        <div className="bloc-tabs">
+                        <button className={toggleState === 1 ? "tabs active-tabs" : "tabs"}  onClick={() => toggleTab(1)}>Notes</button>
+                        <button className={toggleState === 2 ? "tabs active-tabs" : "tabs"}  onClick={() => toggleTab(2)}>Old Notes</button>
+                        </div>
                     </div>
+                    <div className="content-tabs">   
+                        <div className={toggleState === 1 ? "content  active-content" : "content"}>   
+                            <div>
+                                <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." class="form-control searchNotes"></input>
+                            </div>                 
+                            <h1>Notes</h1>
+                            <div className="container">                 
+                                {items.filter((item) => {
+                                    if(searchTerm =="" && item.synced !== 3 && item.createdAt.substring(0,10) === parseDateYYYYMMDD(today)){
+                                        return item
+                                    }else if(item.synced !== 3 && item.noteContent.toLowerCase().includes(searchTerm.toLowerCase()) && item.createdAt.substring(0,10) === parseDateYYYYMMDD(today)
+                                                || item.noteTitle.toLowerCase().includes(searchTerm.toLowerCase()) && item.synced !== 3 && item.createdAt.substring(0,10) === parseDateYYYYMMDD(today)
+                                                || item.createdAt.substring(0,10).toLowerCase().includes(searchTerm.toLowerCase()) && item.synced !== 3 && item.createdAt.substring(0,10) === parseDateYYYYMMDD(today)
+                                            ){
+                                                return item 
+                                    }
+                                    }).map((item) =>                                        
+                                     (<><div className="row titlecontentNotes">
+                                    <div className="titlenote">
+                                        <div className="row buttoninnotes">
+                                            <button onClick={() => handleShow(item._id)} className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faEdit} /></button> 
+                                            <button onClick={() => deleteNotes(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
+                                        </div>
+                                        <p value={item.noteTitle} id="noteTitle">{item.noteTitle}</p>
+                                        {(<span>{parseDateDDMMYYYY(item.createdAt.substring(0,10))}</span>)}
+                                        <p>{item.noteContent}</p>
+                                    </div>                                
+                                </div> </>))}                                                            
+                            </div>   
+                        </div>
+
+                        <div className={toggleState === 2 ? "content  active-content" : "content"}>     
+                            <div>
+                                <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." class="form-control searchNotes" ></input>
+                            </div>                  
+                            <h1>Notes</h1>
+                            <div className="container">                 
+                                {items.filter((item) => {
+                                    if(searchTerm =="" && item.synced !== 3 && item.createdAt.substring(0,10) !== parseDateYYYYMMDD(today)){
+                                        return item
+                                    }else if(item.synced !== 3 && item.noteContent.toLowerCase().includes(searchTerm.toLowerCase())  && item.createdAt.substring(0,10) !== parseDateYYYYMMDD(today)
+                                                || item.noteTitle.toLowerCase().includes(searchTerm.toLowerCase()) && item.synced !== 3  && item.createdAt.substring(0,10) !== parseDateYYYYMMDD(today)
+                                                || item.createdAt.substring(0,10).toLowerCase().includes(searchTerm.toLowerCase()) && item.synced !== 3  && item.createdAt.substring(0,10) !== parseDateYYYYMMDD(today)
+                                                 ){
+                                        return item
+                                    }
+                                    })
+                                .sort((a,b) =>b.createdAt.substring(0,10) - a.createdAt.substring(0,10))
+                                .map(item => (<><div className="row titlecontentNotes">
+                                    <div className="titlenote">
+                                        <div className="row buttoninnotes">
+                                            <button onClick={() => handleShow(item._id)} className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faEdit} /></button> 
+                                            <button onClick={() => deleteNotes(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
+                                        </div>
+                                        <p value={item.noteTitle} id="noteTitle">{item.noteTitle}</p>
+                                        {(<span>{parseDateDDMMYYYY(item.createdAt.substring(0,10))}</span>)}
+                                        <p>{item.noteContent}</p>
+                                    </div>                                
+                                </div> </>))}                                                            
+                            </div>   
+                        </div>
+                    </div>
+
+
+                    </div>
+            </div>
+                    
                     <div className="todo col-md-7 notes">
-                        <h3>Ovdje opišite svoj dan!</h3>
+                        <h2>Ovdje opišite svoj dan!</h2>
                         <div className="container">
                             <form onSubmit={(e)=> submit(e)}>
                             <div className="form-group">
-                                <label>Naslov bilješke</label>
+                                <label className="labelfromnotesadd">Naslov bilješke</label>
                                 <input onChange={(e) => handle(e)} value={note.noteTitle} id="noteTitle" type="text" className="form-control" placeholder="Title"></input>
                             </div>   
                                 <div className="form-group">
-                                    <label>Obilježi svoj dan</label>
+                                    <label className="labelfromnotesadd">Obilježi svoj dan</label>
                                     <textarea onChange={(e) => handle(e)} value={note.noteContent} id="noteContent" className="form-control" type="text"  rows="12" ></textarea>
                                 </div><br></br>
                                 <div className="row">
@@ -238,10 +315,10 @@ function NotesComponent(props){
                             <div className="form-group">
                                 <label>Obilježi svoj dan</label>
                                 <textarea onChange={(e) => handleChange(e)} value={note.noteContent} name="noteContent" className="form-control" type="text"  rows="12" ></textarea>
-                            </div> 
-                            <button onClick={handleClose} className="btn btn-danger NotesBtn">Close</button>                               
-                            <button className="btn btn-primary">Update</button>                               
-                        </form>                 
+                            </div>                                                           
+                            <button className="btn btn-primary updateBtn">Update</button>                               
+                        </form>   
+                        <button onClick={handleClose} className="btn btn-danger CloseUpdate">Close</button>              
                     </Modal.Body>
                 </Modal>
             </>

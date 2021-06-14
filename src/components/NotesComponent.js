@@ -4,7 +4,6 @@ import {Button} from 'react-bootstrap';
 import {Modal} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
-// import Modal from './src/components/ModalEditNotes.js';
 
 function NotesComponent(props){
     let d = localStorage.getItem('data');  
@@ -27,7 +26,6 @@ function NotesComponent(props){
         noteArchived: false,
         synced: 0
     })
-
    
     function submit(e){      
         e.preventDefault();
@@ -67,11 +65,9 @@ function NotesComponent(props){
     }
     
     function deleteNotes(id){
-
         axios.get(`/notes/get/${id}`)
         .then(res =>  {
             setItems1(res.data);   
-            // console.log(items1.noteTitle);
          })
         axios.put(`/notes/put/${id}`,{
             _id: id,
@@ -97,7 +93,7 @@ function NotesComponent(props){
             }) 
             )           
             .catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
     }
    
@@ -106,8 +102,7 @@ function NotesComponent(props){
         const yyyy = date.substring(0,4);
         const mm = date.substring(5,7);
         const dd = date.substring(8,10);
-        const date11 =dd+"."+mm+"."+yyyy;
-        // console.log(date11);  
+        const date11 =dd+"."+mm+"."+yyyy;  
         return date11;
     }
 
@@ -126,29 +121,27 @@ function NotesComponent(props){
             noteTitle: "",
             noteContent: "",
             noteArchived: false,
-            synced: 0
+            synced: 3
         });
-        updateNote(note);
-        // console.log(note);         
+        updateNote(note);     
     };
 
     function updateNote(note1){
-        // console.log(note1._id);
         axios.put(`/notes/put/${note1._id}`,{
             userId: d,
             noteTitle: note.noteTitle,
             noteContent: note.noteContent,
             noteArchived: false,
-            synced: 0
+            synced: 2
         })
         .then(res => {
-            console.log(res.data);
+            // console.log(res.data);
             setNotes({
                 userId: d,
                 noteTitle: items.noteTitle,
                 noteContent: items.noteContent,
                 noteArchived: false,
-                synced: 0
+                synced: 2
             });
             axios.get(`/notes/all/${d}`)
             .then(res =>  {
@@ -157,12 +150,9 @@ function NotesComponent(props){
             handleClose();
             })            
             .catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
-
     }
-
- 
 
     /************ MODALS ****************** */
     const [show, setShow] = useState(false);
@@ -173,10 +163,8 @@ function NotesComponent(props){
         setShow(true);            
         axios.get(`/notes/get/${id}`)
         .then(res =>  {
-            setNotes(res.data);
-            // console.log(res.data)                   
-         })      
-        //  console.log(note.noteTitle) 
+            setNotes(res.data);                   
+         })
     };
     const reload=()=>window.location.reload();
 
@@ -191,7 +179,6 @@ function NotesComponent(props){
 
      const toggleTab = (index) => {
        setToggleState(index);
-       // console.log(index);
      };
      var today = new Date();
      const [searchTerm, setSearchTerm] = useState("")

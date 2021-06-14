@@ -47,7 +47,7 @@ const CurrentDay = styled('div')`
   justify-content: center;
 `;
 
-const CalendarGridComponent = ({startDay,today,items}) => {
+const CalendarGridComponent = ({startDay,today,items, refreshPage}) => {
 
     let d = localStorage.getItem('data'); 
     // const totalDays = 42;
@@ -79,9 +79,12 @@ const CalendarGridComponent = ({startDay,today,items}) => {
         eventDate: "",            
         eventType: 0,
         eventChecked: false,
-        synced: 0
+        synced: 0,
+        titleError: "",
+        eventError: "",
+        timeError: "",
     });
-
+ 
     const [curdate, setCurrDate] = useState();
 
     const clickCell = (key) =>{
@@ -95,8 +98,33 @@ const CalendarGridComponent = ({startDay,today,items}) => {
         handleShow();             
     }
 
+    const validate = () => {
+        let titleError = "";
+        let eventError = "";
+        let timeError = "";
+    
+        if (!event.eventTitle) {
+          titleError = "Title cannot be blank!";
+        }    
+        if (!event.eventType) {
+            eventError = "Please select an event type!";
+        }
+        if (!event.eventDate) {
+            timeError = "Please select time!";
+        }
+    
+        if (titleError || eventError || timeError) {
+          setEvents({ titleError, eventError, timeError });
+          return false;
+        }
+    
+        return true;
+      };
+
     function submit(e){      
         e.preventDefault();
+        const isValid = validate();
+        if (isValid) {
         axios.post('/events/new',{
             userId: d,
             eventTitle: event.eventTitle,
@@ -107,7 +135,7 @@ const CalendarGridComponent = ({startDay,today,items}) => {
             synced: 0
         })
         .then(res =>{
-            console.log(res);
+            // console.log(res);
             setEvents({
                 userId: d,
                 eventTitle: "",
@@ -116,8 +144,9 @@ const CalendarGridComponent = ({startDay,today,items}) => {
                 eventType: 0,
                 eventChecked: false,
                 synced: 0
-            })
+            });
             handleClose();
+            refreshPage();
         })
         .catch(e => {
             setError({
@@ -125,6 +154,7 @@ const CalendarGridComponent = ({startDay,today,items}) => {
         })
         console.log(err);
         })
+    }
             
     };
     function handle(e){
@@ -142,10 +172,15 @@ const CalendarGridComponent = ({startDay,today,items}) => {
     const reload=()=>window.location.reload();
   
     const isCurrentDay = (day) => moment().isSame(day, 'day');
-    const isSelectedMonth = (day) => today.isSame(day, 'month');
-
-  
+    const isSelectedMonth = (day) => today.isSame(day, 'month');  
     let numrow =0;
+
+    function refreshCalGrid(dayItem){
+       return  <p className={items.filter(item => (item.synced !== 3) && (item.eventChecked === false)
+            && (parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000))).length == 0 ? "counter0" : "counter" }>
+            {items.filter(item => (item.synced !== 3) && item.eventChecked === false
+            && (parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000))).length}</p>; 
+    }
     
     return(        
         <>      
@@ -175,10 +210,7 @@ const CalendarGridComponent = ({startDay,today,items}) => {
                                 {parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000) ? "" : ''}</div>))} */}
                             </DayWrapper>                           
                         </RowInCell>           
-                            <p className={items.filter(item => (item.synced !== 3)
-                             && (parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000))).length == 0 ? "counter0" : "counter" }>
-                             {items.filter(item => (item.synced !== 3)
-                             && (parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000))).length}</p>             
+                                {refreshCalGrid(dayItem)}     
                     </CellWrapper>
                 ))
             }
@@ -192,21 +224,30 @@ const CalendarGridComponent = ({startDay,today,items}) => {
         <Modal.Body>                       
             <form onSubmit={(e)=> submit(e)}>
                 <div className="form-group">
-                    <label>Title</label>
+                    <label>Title</label>                  
                     <input onChange={(e) => handle(e)} value={event.eventTitle} id="eventTitle" type="text" className="form-control" placeholder="Title"></input>
+                    <div style={event.titleError !== "" ? {display: "block" } : {display:"none"}} 
+                        className="alert alert-danger hidden" role="alert">{event.titleError}
+                    </div>
                 </div>   
                 {/* <div className="form-group">
                     <label>Content</label>
                     <textarea onChange={(e) => handle(e)} value={event.eventDetails} id="eventDetails" className="form-control" type="text"  rows="3" ></textarea>
                 </div>   */}<br></br>
                 <div className="form-group">
-                    <input onChange={(e) => handle(e)} type="checkbox" id="eventType" name="event" value={1}/> <label for="event"> Event</label><br></br>
-                    <input onChange={(e) => handle(e)} type="checkbox" id="eventType" name="reminder" value={2}/> <label for="reminder"> Reminder</label><br></br>
-                    <input onChange={(e) => handle(e)} type="checkbox" id="eventType" name="todo" value={3}/> <label for="todo"> TODO</label><br></br>
+                    <input onChange={(e) => handle(e)} checked={event.eventType == 1} type="radio" id="eventType" name="event" value={1}/> <label for="event"> Event</label><br></br>
+                    <input onChange={(e) => handle(e)} checked={event.eventType == 2} type="radio" id="eventType" name="reminder" value={2}/> <label for="reminder"> Reminder</label><br></br>
+                    <input onChange={(e) => handle(e)} checked={event.eventType == 3} type="radio" id="eventType" name="todo" value={3}/> <label for="todo"> TODO</label><br></br>
                 </div> 
+                <div style={event.eventError !== "" ? {display: "block" } : {display:"none"}} 
+                        className="alert alert-danger hidden" role="alert">{event.eventError}
+                    </div>
                 <div>
-                    <input onChange={(e) => handle(e)} value={event.eventDate} type="time"  id="eventDate" name="eventDate" required/>
+                    <input onChange={(e) => handle(e)} value={event.eventDate} type="time"  id="eventDate" name="eventDate"/>
                 </div>
+                <div style={event.timeError !== "" ? {display: "block" } : {display:"none"}} 
+                        className="alert alert-danger hidden" role="alert">{event.timeError}
+                    </div>
                  <hr></hr>
                 <div className="row">
                     <div className="col-xs-12">

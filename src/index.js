@@ -6,15 +6,17 @@ import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
 
 
+
 axios.defaults.baseURL = 'https://secret-temple-10001.herokuapp.com/bbetter';
 axios.defaults.headers.common['Authorization'] ='Bearer ' + localStorage.getItem('data');
 
 ReactDOM.render(
-  <React.StrictMode>
+  <React.StrictMode> 
     <App />
-  </React.StrictMode>,
+    </React.StrictMode>, 
   document.getElementById('root')
 );
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

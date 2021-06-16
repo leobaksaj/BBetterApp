@@ -8,7 +8,7 @@ import Login from './components/Login.component';
 import Register from './components/Register.component';
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import axios from 'axios';
-require ('dotenv').config()
+// require ('dotenv').config()
 
 
   export default class App extends Component {
@@ -18,8 +18,7 @@ require ('dotenv').config()
     };
 
     componentDidMount = () => {    
-      let d = localStorage.getItem('data');
-  
+      let d = localStorage.getItem('data');  
       axios.get(`/users/get/${d}`).then(
           res => {
               this.setUser(res.data);

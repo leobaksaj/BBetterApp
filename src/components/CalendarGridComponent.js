@@ -116,8 +116,7 @@ const CalendarGridComponent = ({startDay,today,items, refreshPage}) => {
         if (titleError || eventError || timeError) {
           setEvents({ titleError, eventError, timeError });
           return false;
-        }
-    
+        }    
         return true;
       };
 
@@ -152,11 +151,12 @@ const CalendarGridComponent = ({startDay,today,items, refreshPage}) => {
             setError({
             err: "Something is wrong. Try again!"
         })
-        console.log(err);
+        // console.log(err);
         })
-    }
-            
+        }
+                    
     };
+
     function handle(e){
         const newevent = {...event };
         newevent[e.target.id] = e.target.value;
@@ -167,7 +167,11 @@ const CalendarGridComponent = ({startDay,today,items, refreshPage}) => {
     const handleClose = () => setShow(false);
 
     function handleShow(){    
-        setShow(true);             
+        setShow(true);  
+        let titleError = "";
+        let eventError = "";
+        let timeError = "";
+        setEvents({ titleError, eventError, timeError });
     };
     const reload=()=>window.location.reload();
   

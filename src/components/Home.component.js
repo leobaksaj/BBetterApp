@@ -1,11 +1,9 @@
 import axios from 'axios';
-import React,{useEffect,useState} from 'react';
+import React,{useEffect,useState,useContext,useRef} from 'react';
 import moment from 'moment';
 import { TitleCalendarComponent } from './TitleCalendar';
 import { MonitorCalendar } from './MonitorCalendar';
 import { CalendarGridComponent } from './CalendarGridComponent';
-import BtnTimerComponent from './BtnTimerComponent';
-import DisplayTimerComponent from './DisplayTimerComponent';
 import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faCheck } from '@fortawesome/free-solid-svg-icons';
@@ -33,66 +31,151 @@ function Home(props){
     ////////// KALENDAR ////////////////
     const [items, setItems] = useState([]); 
     const [items1, setItems1] = useState(); 
+    const [sessions, setSessions] = useState([]); 
                 
-        window.moment =  moment;     
-        moment.updateLocale('en', {week:{dow:1}}); 
-        const [today, setToday] = useState(moment());
-        const startDay = today.clone().startOf('month').startOf('week'); 
+    window.moment =  moment;     
+    moment.updateLocale('en', {week:{dow:1}}); 
+    const [today, setToday] = useState(moment());
+    const startDay = today.clone().startOf('month').startOf('week'); 
 
-        useEffect(() => {
-            // let d = localStorage.getItem('data');
-            axios.get(`/events/all/${d}`)
-            .then(res =>  {
-                setItems(res.data);   
-            });
-        },[]);
+    useEffect(() => {
+        // let d = localStorage.getItem('data');
+        axios.get(`/events/all/${d}`)
+        .then(res =>  {
+            setItems(res.data);   
+        });   
+        axios.get(`/sessions/all/${d}`)
+        .then(res =>  {
+            setSessions(res.data);   
+        });         
+    },[]);
 
     /////////////////////// KRAJ KALENDARA //////////////////
-
     //////////////////////// TIMER ////////////////////
-    const [time, setTime] = useState({ms:0, s:0, m:0, h:0});
-    const [interv, setInterv] = useState();
-    const [status, setStatus] = useState(0);
-      // Not started = 0
-     // started = 1
-    // stopped = 2
+    const [time, setTime] = useState({
+      durationTime: 0
+  });
 
-    const start = () => {
-        run();
-        setStatus(1);
-        setInterv(setInterval(run, 10));
-      };
+    function handleDurationTime(e){
+      const newevent = {...session };
+      newevent[e.target.name] = e.target.value;
+      setTime(newevent);
+  }
 
-    var updatedMs = time.ms, updatedS = time.s, updatedM = time.m, updatedH = time.h;
-    const run = () => {
-        if(updatedM === 60){
-          updatedH++;
-          updatedM = 0;
-        }
-        if(updatedS === 60){
-          updatedM++;
-          updatedS = 0;
-        }
-        if(updatedMs === 100){
-          updatedS++;
-          updatedMs = 0;
-        }
-        updatedMs++;
-        return setTime({ms:updatedMs, s:updatedS, m:updatedM, h:updatedH});
-      };
+    const [session, setSession] = useState({
+      userId: d,
+      sessionLength: "",
+      sessionPoints: "",
+      sessionFinished: false,
+      synced: 0
+  });
+  const intervalRef = useState(null);
+  const [timer, setTimer]  = useState('00:00:00');
 
-      const stop = () => {
-        clearInterval(interv);
-        setStatus(2);
-      };
-    
-      const reset = () => {
-        clearInterval(interv);
-        setStatus(0);
-        setTime({ms:0, s:0, m:0, h:0})
-      };
-    
-      const resume = () => start();   
+  function getTimeRemaining(endtime){
+    const total = Date.parse(endtime) - Date.parse(new Date());
+    const seconds = Math.floor((total/1000)%60); 
+    const minutes = Math.floor((total/1000/60)%60); 
+    const hours = Math.floor((total/1000*60*60)%24); 
+    const days = Math.floor(total/(1000*60*60*24)); 
+   return {
+     total,days,hours,minutes,seconds
+   };
+  }
+
+  function startTimer(deadline){
+    let {total,days,hours,minutes,seconds} = getTimeRemaining(deadline);
+    if(total >= 0){
+      setTimer(
+        (hours > 9 ? hours: '0'+hours)+ ':' + (minutes > 9 ? minutes: '0'+minutes)+ ':' +(seconds > 9 ? seconds: '0'+seconds)
+      )
+     console.log(time.durationTime);
+    }else{   
+      console.log(time.durationTime);
+      clearInterval(intervalRef.current);
+      axios.post('/sessions/new',{
+            userId: d,
+            sessionLength: time.durationTime,
+            sessionPoints: time.durationTime,
+            sessionFinished: true,
+            synced: 0
+        })
+        .then(res =>{
+          console.log(time.durationTime);
+            console.log(res);
+            setSession({
+              userId: d,
+              sessionLength: "",
+              sessionPoints: "",
+              sessionFinished: true,
+              synced: 0
+            }) 
+          })         
+    }
+  }
+
+  function clearTimer(endtime){
+    setTimer('00:00:00');
+    if(intervalRef.current) {clearInterval(intervalRef.current)} 
+      const id = setInterval(() => {
+        startTimer(endtime);
+      },1000)
+      intervalRef.current = id;   
+  }
+
+  function getDeadlineTime(){ 
+    let deadline = new Date();
+    deadline.setSeconds(deadline.getSeconds()+(time.durationTime)*6);
+    return deadline; 
+  }
+
+  function starttimer(){
+    clearTimer(getDeadlineTime());
+    return () => {if(intervalRef.current) clearInterval(intervalRef.current)}
+  }
+
+  function onClickResetbutton(){
+    if(intervalRef.current){    
+      setTimer(timer);
+      clearInterval(intervalRef);
+      clearTimer(getDeadlineTime());
+    }
+    console.log("Stali smo"); 
+    axios.post('/sessions/new',{
+      userId: d,
+      sessionLength: time.durationTime,
+      sessionPoints: time.durationTime,
+      sessionFinished: false,
+      synced: 0
+  })
+  .then(res =>{
+    console.log(time.durationTime);
+      console.log(res);
+      setSession({
+        userId: d,
+        sessionLength: "",
+        sessionPoints: "",
+        sessionFinished: false,
+        synced: 0
+      }) 
+    }).then(
+      axios.get(`/sessions/all/${d}`)
+      .then(res =>  {
+          setSessions(res.data);   
+      })
+    )   
+  }
+
+  function parseDateYYYYMMDD(key){ 
+    const date = key.substring(0,10);    
+    const yyyy = date.substring(0,4);
+    const mm = date.substring(5,7);
+    const dd = date.substring(8,10);
+    const date11 = dd +"."+mm+"."+yyyy;
+    // console.log(date11);  
+    return date11;
+}
+      
       /************** DELETEE EVENTS ********************** */
 
       const [event, setEvents] = useState({
@@ -107,21 +190,12 @@ function Home(props){
 
     function submitDeleteEvent(e){      
       e.preventDefault();
-      setEvents({
-        userId: d,
-        eventTitle: "",
-        eventDetails: "",
-        eventDate: "",            
-        eventType: 1,
-        eventChecked: false,
-        synced: 3
-      });
       deleteEvents(event);
-      console.log(event);         
+      // console.log(event);         
   };
 
     function deleteEvents(event1){
-      console.log(event1._id);
+      // console.log(event1._id);
       axios.put(`/events/put/${event1._id}`,{
           userId: d,
           eventTitle: event.eventTitle,
@@ -132,7 +206,7 @@ function Home(props){
           synced: 3
       })
       .then(res => {
-          console.log(res.data);
+          // console.log(res.data);
           setEvents({
             userId: d,
             eventTitle: event.eventTitle,
@@ -228,8 +302,7 @@ function Home(props){
         const newevent = {...event };
         newevent[e.target.name] = e.target.value;
         setEvents(newevent);
-    }      
-        
+    }              
     /************ TAB KONTROLE    ******************** */
     const [toggleState, setToggleState] = useState(1);
 
@@ -248,7 +321,7 @@ function Home(props){
                 <div className="row mainrow">
                     {/* TODO LISTA */}
                     <div className="todo col-md-3">                    
-                    <div className="container">
+                    <div className="container leftcontainer">
                       <div className="tab">
                         <div className="bloc-tabs">
                           <button className={toggleState === 1 ? "tabs active-tabs" : "tabs"}  onClick={() => toggleTab(1)}>Event</button>
@@ -260,9 +333,10 @@ function Home(props){
                       <div className="content-tabs">
                         <div className={toggleState === 1 ? "content  active-content" : "content"}>
                         <div>
-                            <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." class="form-control searchNotes"></input>
+                            <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." className="form-control searchNotes"></input>
                         </div>  
-                        <h4>Event</h4>                    
+                        <h4>Event</h4>  
+                        <div className="sessionMapEvent">                     
                             {items.filter((item) => {
                               if(searchTerm =="" &&  item.synced !== 3 && item.eventType === 1 && item.eventChecked === false ){
                                   return item
@@ -287,14 +361,16 @@ function Home(props){
                                         <p>{item.eventDate}</p>                                                                       
                                     </div>
                                   </div>               
-                          </>))}  
+                          </>)).reverse()}  
+                          </div>
                           </div>
 
                           <div className={toggleState === 2 ? "content  active-content" : "content"}>
                             <div>
-                              <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." class="form-control searchNotes"></input>
+                              <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." className="form-control searchNotes"></input>
                             </div>  
-                            <h4>Reminder</h4>                    
+                            <h4>Reminder</h4>  
+                            <div className="sessionMapEvent">                    
                             {items.filter((item) => {
                               if(searchTerm =="" &&  item.synced !== 3 && item.eventType === 2 && item.eventChecked === false ){
                                   return item
@@ -310,7 +386,7 @@ function Home(props){
                                     <div className="titlenote">
                                       <div className="row buttoninnotes">
                                         <button onClick={() => handleShow(item._id)} className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faCheck} /></button> 
-                                        <button onClick={() => deleteEvents(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
+                                        <button onClick={() => handleShowDelete(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
                                         </div>
                                         <p>{item.eventTitle}</p>   
                                         <p>{item.eventDate}</p> 
@@ -318,12 +394,13 @@ function Home(props){
                                 </div>               
                           </>))}  
                           </div>
-
+                          </div>
                           <div className={toggleState === 3 ? "content  active-content" : "content"}>
                             <div>
-                              <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." class="form-control searchNotes"></input>
+                              <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." className="form-control searchNotes"></input>
                             </div>  
-                            <h4>TODO</h4>                    
+                            <h4>TODO</h4>   
+                            <div className="sessionMapEvent">                    
                             {items.filter((item) => {
                               if(searchTerm =="" &&  item.synced !== 3 && item.eventType === 3 && item.eventChecked === false ){
                                   return item
@@ -339,7 +416,7 @@ function Home(props){
                                     <div className="titlenote">
                                       <div className="row buttoninnotes">
                                         <button onClick={() => handleShow(item._id)} className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faCheck} /></button> 
-                                        <button onClick={() => deleteEvents(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
+                                        <button onClick={() => handleShowDelete(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
                                         </div>
                                         <p>{item.eventTitle}</p>   
                                         <p>{item.eventDate}</p> 
@@ -347,11 +424,13 @@ function Home(props){
                                 </div>                  
                               </>))}  
                               </div>
+                              </div>
                               <div className={toggleState === 4 ? "content  active-content" : "content"}>
                                 <div>
-                                  <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." class="form-control searchNotes"></input>
+                                  <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." className="form-control searchNotes"></input>
                                 </div>  
-                                <h4>All</h4>                    
+                                <h4>All</h4>   
+                                <div className="sessionMapEvent">                 
                                    {items.filter((item) => {
                                     if(searchTerm =="" &&  item.synced !== 3 && item.eventChecked === false){
                                         return item
@@ -361,14 +440,14 @@ function Home(props){
                                        && item.eventDate.toLowerCase().includes(searchTerm.toLowerCase()) ){
                                         return item
                                     }                             
-                                  })
+                                  })                              
                                 .map(item => ( 
                                 <>
                                   <div className="row titlecontent">
                                     <div className="titlenote">
                                       <div className="row buttoninnotes">
                                         <button onClick={() => handleShow(item._id)} className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faCheck} /></button> 
-                                        <button onClick={() => deleteEvents(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
+                                        <button onClick={() => handleShowDelete(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
                                         </div>
                                         <p>{item.eventTitle}</p>   
                                         <p>{item.eventDate}</p> 
@@ -376,10 +455,10 @@ function Home(props){
                                 </div>                  
                               </>))}  
                               </div>
+                              </div>
                         </div>                                                    
                         </div>                     
                     </div>                 
-
                                 {/* KALENDAR  */}
                     <div className="col-md-5 kal">  
                     <ShadowWrapper> 
@@ -399,8 +478,35 @@ function Home(props){
                     <div className="main-section">
                         <div className="clock-holder">
                             <div className="stopwatch">
-                                <DisplayTimerComponent time={time}></DisplayTimerComponent>
-                                <BtnTimerComponent  status={status} resume={resume} reset={reset} stop={stop} start={start}></BtnTimerComponent>
+                            <div>
+                              <h1>Pomodoro timer</h1>
+                              <div className="form-group">
+                                <input onChange={(e) => handleDurationTime(e)} checked={time.durationTime == 10} className="radiobuttontimer" type="radio" name="durationTime"  value={10}/><label> 10 min </label>
+                                <input onChange={(e) => handleDurationTime(e)} checked={time.durationTime == 25} className="radiobuttontimer" type="radio" name="durationTime"  value={25}/><label> 25 min </label>
+                                <input onChange={(e) => handleDurationTime(e)} checked={time.durationTime == 30} className="radiobuttontimer" type="radio" name="durationTime"  value={30}/><label> 30 min </label><br></br>
+                                <input onChange={(e) => handleDurationTime(e)} checked={time.durationTime == 35} className="radiobuttontimer" type="radio" name="durationTime"  value={35}/><label> 35 min </label>
+                                <input onChange={(e) => handleDurationTime(e)} checked={time.durationTime == 40} className="radiobuttontimer" type="radio" name="durationTime"  value={40}/><label> 40 min </label>
+                                <input onChange={(e) => handleDurationTime(e)} checked={time.durationTime == 45} className="radiobuttontimer" type="radio" name="durationTime"  value={45}/><label> 45 min </label><br></br>
+                              </div> 
+                            </div>
+                                    <span> {timer}</span><br></br>
+                                <button onClick={starttimer} className="stopwatch-btn stopwatch-btn-gre">Start</button>                             
+                                <button onClick={onClickResetbutton} className="stopwatch-btn stopwatch-btn-red">Stop</button>   
+                                <hr></hr>
+                                <div className="sessionMap">
+                            {sessions.map(item => ( 
+                              <>
+                             
+                                <div className={item.sessionFinished ? "titlecontent1" : "titlecontent2"} >
+                                  <div className="row" >
+                                    <div className="row buttoninnotes">
+                                      </div>                                    
+                                          <p>Trajanje sesije: {item.sessionLength} min</p>                               
+                                          <p>Datum obavljanja: {parseDateYYYYMMDD(item.createdAt)}</p>                                                                       
+                                      </div>
+                                    </div>                                           
+                            </>))}   
+                            </div>                             
                             </div>
                         </div>
                     </div>
@@ -410,7 +516,7 @@ function Home(props){
              <Modal show={show} onHide={handleClose}>
              <Modal.Header closeButton>
              <Modal.Title>Označi kao odrađeno</Modal.Title>
-             </Modal.Header>
+             </Modal.Header>   
              <Modal.Body>                       
                  <form onSubmit={(e)=> submitDoneEvent(e)}>
                      <div className="form-group">

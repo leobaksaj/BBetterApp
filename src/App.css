@@ -136,9 +136,17 @@
 
 .sessionMapEvent{
   max-height: 30rem;
-  padding-left:3%;
+  padding-left:5%;
   padding-right: 6%;
   width: 110%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.sessionMapNotes{
+  max-height: 28rem;
+  padding-right: 6%;
+  width: 105%;
   overflow-y: scroll;
   overflow-x: hidden;
 }

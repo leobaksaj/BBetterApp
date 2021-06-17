@@ -50,14 +50,12 @@ const CurrentDay = styled('div')`
 const CalendarGridComponent = ({startDay,today,items, refreshPage}) => {
 
     let d = localStorage.getItem('data'); 
-    // const totalDays = 42;
     const day = startDay.clone().subtract(1, 'day');
     const daysArray = [...Array(42)].map(() => day.add(1, 'day').clone());   
 
     function getDateFromCell(key){
         const date11 = new Date(key * 1000).toISOString().slice(0,19).replace('T', ''); 
-        const date12 = date11.substring(0,10);    
-        // console.log(date12);  
+        const date12 = date11.substring(0,10);      
         return date12;
     }
 
@@ -66,8 +64,7 @@ const CalendarGridComponent = ({startDay,today,items, refreshPage}) => {
         const yyyy = date.substring(6,10);
         const mm = date.substring(3,5);
         const dd = date.substring(0,2);
-        const date11 = yyyy +"-"+mm+"-"+dd;
-        // console.log(date11);  
+        const date11 = yyyy +"-"+mm+"-"+dd;  
         return date11;
     }
     const [err, setError] = useState();    
@@ -134,7 +131,6 @@ const CalendarGridComponent = ({startDay,today,items, refreshPage}) => {
             synced: 0
         })
         .then(res =>{
-            // console.log(res);
             setEvents({
                 userId: d,
                 eventTitle: "",
@@ -173,7 +169,6 @@ const CalendarGridComponent = ({startDay,today,items, refreshPage}) => {
         let timeError = "";
         setEvents({ titleError, eventError, timeError });
     };
-    const reload=()=>window.location.reload();
   
     const isCurrentDay = (day) => moment().isSame(day, 'day');
     const isSelectedMonth = (day) => today.isSame(day, 'month');  
@@ -196,7 +191,6 @@ const CalendarGridComponent = ({startDay,today,items, refreshPage}) => {
                     </RowInCell>
                 </CellWrapper>
             ))}
-
         </GridWrapper>
         <GridWrapper >
             {[...Array(7)].map(() => <CellWrapper  isHeader/>)}
@@ -207,11 +201,9 @@ const CalendarGridComponent = ({startDay,today,items, refreshPage}) => {
                                  isWeekday={dayItem.day() === 6 || dayItem.day() === 0}
                                  isSelectedMonth={(isSelectedMonth(dayItem))}>
                         <RowInCell justifyContent ={'flex-end'}>
-                            <DayWrapper>                             
-                                {!isCurrentDay(dayItem) && dayItem.format('D')}
-                                {isCurrentDay(dayItem) && <CurrentDay> {dayItem.format('D')}</CurrentDay>}                                                    
-                                {/* {items.map(item => (<div><br></br><br></br>
-                                {parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000) ? "" : ''}</div>))} */}
+                            <DayWrapper>                            
+                                {!isCurrentDay(dayItem) && dayItem.format('D') /* svi ostali dani */}
+                                {isCurrentDay(dayItem) && <CurrentDay> {dayItem.format('D')}</CurrentDay> /* današnji dan  */}                                                     
                             </DayWrapper>                           
                         </RowInCell>           
                                 {refreshCalGrid(dayItem)}     

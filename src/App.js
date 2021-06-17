@@ -8,14 +8,10 @@ import Login from './components/Login.component';
 import Register from './components/Register.component';
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import axios from 'axios';
-// require ('dotenv').config()
-
 
   export default class App extends Component {
 
-    state = {
-      isVisible: ''
-    };
+    state = {};
 
     componentDidMount = () => {    
       let d = localStorage.getItem('data');  

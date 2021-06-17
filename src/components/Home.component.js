@@ -39,7 +39,6 @@ function Home(props){
     const startDay = today.clone().startOf('month').startOf('week'); 
 
     useEffect(() => {
-        // let d = localStorage.getItem('data');
         axios.get(`/events/all/${d}`)
         .then(res =>  {
             setItems(res.data);   
@@ -102,15 +101,19 @@ function Home(props){
         })
         .then(res =>{
           console.log(time.durationTime);
-            console.log(res);
+            // console.log(res);
             setSession({
               userId: d,
               sessionLength: "",
               sessionPoints: "",
               sessionFinished: true,
               synced: 0
+            })
+            axios.get(`/sessions/all/${d}`)
+            .then(res =>  {
+                setSessions(res.data);   
             }) 
-          })         
+          })        
     }
   }
 
@@ -125,7 +128,7 @@ function Home(props){
 
   function getDeadlineTime(){ 
     let deadline = new Date();
-    deadline.setSeconds(deadline.getSeconds()+(time.durationTime)*6);
+    deadline.setSeconds(deadline.getSeconds()+(time.durationTime)*60);
     return deadline; 
   }
 
@@ -140,7 +143,7 @@ function Home(props){
       clearInterval(intervalRef);
       clearTimer(getDeadlineTime());
     }
-    console.log("Stali smo"); 
+    // console.log("Break"); 
     axios.post('/sessions/new',{
       userId: d,
       sessionLength: time.durationTime,
@@ -157,13 +160,13 @@ function Home(props){
         sessionPoints: "",
         sessionFinished: false,
         synced: 0
-      }) 
-    }).then(
+      })
       axios.get(`/sessions/all/${d}`)
       .then(res =>  {
           setSessions(res.data);   
       })
-    )   
+    })    
+    // window.location.reload();  
   }
 
   function parseDateYYYYMMDD(key){ 
@@ -195,7 +198,6 @@ function Home(props){
   };
 
     function deleteEvents(event1){
-      // console.log(event1._id);
       axios.put(`/events/put/${event1._id}`,{
           userId: d,
           eventTitle: event.eventTitle,
@@ -229,21 +231,10 @@ function Home(props){
 
     function submitDoneEvent(e){      
       e.preventDefault();
-      setEvents({
-        userId: d,
-        eventTitle: "",
-        eventDetails: "",
-        eventDate: "",            
-        eventType: 1,
-        eventChecked: false,
-        synced: 2
-      });
-      updateEvent(event);
-      // console.log(event);         
+      updateEvent(event);        
   };
 
   function updateEvent(event1){
-      // console.log(event1._id);
       axios.put(`/events/put/${event1._id}`,{
           userId: d,
           eventTitle: event.eventTitle,
@@ -467,8 +458,7 @@ function Home(props){
                             today={today}
                             prevHandler={prevHandler}
                             todayHandler={todayHandler}
-                            nextHandler={nextHandler}
-                            items={items}>
+                            nextHandler={nextHandler}>
                         </MonitorCalendar>
                         <CalendarGridComponent startDay={startDay} today={today} items={items} refreshPage={refreshPage} ></CalendarGridComponent>
                     </ShadowWrapper> 
@@ -492,11 +482,10 @@ function Home(props){
                                     <span> {timer}</span><br></br>
                                 <button onClick={starttimer} className="stopwatch-btn stopwatch-btn-gre">Start</button>                             
                                 <button onClick={onClickResetbutton} className="stopwatch-btn stopwatch-btn-red">Stop</button>   
-                                <hr></hr>
+                                <hr></hr>                               
                                 <div className="sessionMap">
                             {sessions.map(item => ( 
                               <>
-                             
                                 <div className={item.sessionFinished ? "titlecontent1" : "titlecontent2"} >
                                   <div className="row" >
                                     <div className="row buttoninnotes">
@@ -505,7 +494,7 @@ function Home(props){
                                           <p>Datum obavljanja: {parseDateYYYYMMDD(item.createdAt)}</p>                                                                       
                                       </div>
                                     </div>                                           
-                            </>))}   
+                            </>)).reverse()}   
                             </div>                             
                             </div>
                         </div>

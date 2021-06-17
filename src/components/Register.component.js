@@ -1,5 +1,6 @@
 import React,{Component} from 'react';
 import axios from 'axios';
+import { Redirect } from 'react-router';
 
 export default class Register extends Component{
 
@@ -16,10 +17,13 @@ export default class Register extends Component{
             gender :this.gender,
             age :this.age,
         }
-
-        axios.post('/users/new',data).then(
+        axios.post('/users/new',data)
+        .then(
             res =>{
                  console.log(res)
+                 this.setState({
+                    loggedIn:true
+                });
             }
         ).catch(e => {
             this.setState({
@@ -29,6 +33,11 @@ export default class Register extends Component{
     };
 
     render(){
+
+        if(this.state.loggedIn)
+        {
+            return <Redirect to={'/login'}/>; //preusmjeravanje na stranice
+        }
 
         let error = '';
         if(this.state.message){
@@ -68,10 +77,17 @@ export default class Register extends Component{
                         <label>Confirm password</label>
                         <input type="password" className="form-control" placeholder="Password" onChange={e => this. = e.target.value}/>
                     </div>       */}
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <label>Gender</label>
-                        <input type="text" className="form-control" placeholder="Gender" onChange={e => this.gender = e.target.value}/>
-                    </div>   
+                        <input type="text" className="form-control" placeholder="M or " onChange={e => this.gender = e.target.value}/>
+                    </div>    */}
+                    <label>Gender </label>
+                    <select className="form-control" onChange={e => this.gender = e.target.value} name="gender" >
+                        <option value=""></option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                        <option value="O">Other</option>
+                    </select>
                     <div className="form-group">
                         <label>Age</label>
                         <input type="number" className="form-control" placeholder="Age" min="12" max="90" onChange={e => this.age = e.target.value}/>

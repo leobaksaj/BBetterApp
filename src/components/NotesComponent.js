@@ -98,10 +98,7 @@ function NotesComponent(props){
     };
     
     function deleteNotes(note1){
-        // axios.get(`/notes/get/${note1._id}`)
-        // .then(res =>  {
-        //     setItems1(res.data);   
-        //  })
+        
         axios.put(`/notes/put/${note1._id}`,{
             _id: note1._id,
             userId: d,
@@ -248,6 +245,7 @@ function NotesComponent(props){
                                 <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." class="form-control searchNotes"></input>
                             </div>                 
                             <h1>Notes</h1>
+                            <div className="sessionMapNotes">    
                             <div className="container">                 
                                 {items.filter((item) => {
                                     if(searchTerm =="" && item.synced !== 3 && item.createdAt.substring(0,10) === parseDateYYYYMMDD(today)){
@@ -270,7 +268,8 @@ function NotesComponent(props){
                                         <p>{item.noteContent}</p>
                                     </div>                                
                                 </div> </>))}                                                            
-                            </div>   
+                            </div> 
+                            </div>  
                         </div>
 
                         <div className={toggleState === 2 ? "content  active-content" : "content"}>     
@@ -278,6 +277,7 @@ function NotesComponent(props){
                                 <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." class="form-control searchNotes" ></input>
                             </div>                  
                             <h1>Notes</h1>
+                            <div className="sessionMapNotes">    
                             <div className="container">                 
                                 {items.filter((item) => {
                                     if(searchTerm =="" && item.synced !== 3 && item.createdAt.substring(0,10) !== parseDateYYYYMMDD(today)){
@@ -294,14 +294,15 @@ function NotesComponent(props){
                                     <div className="titlenote">
                                         <div className="row buttoninnotes">
                                             <button onClick={() => handleShow(item._id)} className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faEdit} /></button> 
-                                            <button onClick={() => deleteNotes(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
+                                            <button onClick={() => handleShowDelete(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
                                         </div>
                                         <p value={item.noteTitle} id="noteTitle">{item.noteTitle}</p>
                                         {(<span>{parseDateDDMMYYYY(item.createdAt.substring(0,10))}</span>)}
                                         <p>{item.noteContent}</p>
                                     </div>                                
                                 </div> </>))}                                                            
-                            </div>   
+                            </div> 
+                            </div> 
                         </div>
                     </div>
 

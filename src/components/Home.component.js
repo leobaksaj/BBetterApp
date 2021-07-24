@@ -8,6 +8,11 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faCheck } from '@fortawesome/free-solid-svg-icons';
 import {Modal} from 'react-bootstrap';
+import { useTimer } from 'react-timer-hook';
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
+import ReactTooltip from 'react-tooltip';
+import Tooltip from "react-simple-tooltip"
 
 const ShadowWrapper = styled('div')`
   border-top: 1px solid #737374;
@@ -21,13 +26,13 @@ const ShadowWrapper = styled('div')`
 
 function Home(props){
 
+  let d = localStorage.getItem('data');  
   const refreshPage = ()=>{
     axios.get(`/events/all/${d}`)
     .then(res =>  {
         setItems(res.data);   
     });
- }
-    let d = localStorage.getItem('data');  
+ }    
     ////////// KALENDAR ////////////////
     const [items, setItems] = useState([]); 
     const [items1, setItems1] = useState(); 
@@ -51,15 +56,6 @@ function Home(props){
 
     /////////////////////// KRAJ KALENDARA //////////////////
     //////////////////////// TIMER ////////////////////
-    const [time, setTime] = useState({
-      durationTime: 0
-  });
-
-    function handleDurationTime(e){
-      const newevent = {...session };
-      newevent[e.target.name] = e.target.value;
-      setTime(newevent);
-  }
 
     const [session, setSession] = useState({
       userId: d,
@@ -67,107 +63,117 @@ function Home(props){
       sessionPoints: "",
       sessionFinished: false,
       synced: 0
-  });
-  const intervalRef = useState(null);
-  const [timer, setTimer]  = useState('00:00:00');
+  });  
 
-  function getTimeRemaining(endtime){
-    const total = Date.parse(endtime) - Date.parse(new Date());
-    const seconds = Math.floor((total/1000)%60); 
-    const minutes = Math.floor((total/1000/60)%60); 
-    const hours = Math.floor((total/1000*60*60)%24); 
-    const days = Math.floor(total/(1000*60*60*24)); 
-   return {
-     total,days,hours,minutes,seconds
-   };
-  }
-
-  function startTimer(deadline){
-    let {total,days,hours,minutes,seconds} = getTimeRemaining(deadline);
-    if(total >= 0){
-      setTimer(
-        (hours > 9 ? hours: '0'+hours)+ ':' + (minutes > 9 ? minutes: '0'+minutes)+ ':' +(seconds > 9 ? seconds: '0'+seconds)
-      )
-     console.log(time.durationTime);
-    }else{   
-      console.log(time.durationTime);
-      clearInterval(intervalRef.current);
-      axios.post('/sessions/new',{
-            userId: d,
-            sessionLength: time.durationTime,
-            sessionPoints: time.durationTime,
-            sessionFinished: true,
-            synced: 0
-        })
-        .then(res =>{
-          console.log(time.durationTime);
-            // console.log(res);
-            setSession({
-              userId: d,
-              sessionLength: "",
-              sessionPoints: "",
-              sessionFinished: true,
-              synced: 0
-            })
-            axios.get(`/sessions/all/${d}`)
-            .then(res =>  {
-                setSessions(res.data);   
-            }) 
-          })        
-    }
-  }
-
-  function clearTimer(endtime){
-    setTimer('00:00:00');
-    if(intervalRef.current) {clearInterval(intervalRef.current)} 
-      const id = setInterval(() => {
-        startTimer(endtime);
-      },1000)
-      intervalRef.current = id;   
-  }
-
-  function getDeadlineTime(){ 
-    let deadline = new Date();
-    deadline.setSeconds(deadline.getSeconds()+(time.durationTime)*60);
-    return deadline; 
-  }
-
-  function starttimer(){
-    clearTimer(getDeadlineTime());
-    return () => {if(intervalRef.current) clearInterval(intervalRef.current)}
-  }
-
-  function onClickResetbutton(){
-    if(intervalRef.current){    
-      setTimer(timer);
-      clearInterval(intervalRef);
-      clearTimer(getDeadlineTime());
-    }
-    // console.log("Break"); 
-    axios.post('/sessions/new',{
-      userId: d,
-      sessionLength: time.durationTime,
-      sessionPoints: time.durationTime,
-      sessionFinished: false,
-      synced: 0
-  })
-  .then(res =>{
-    console.log(time.durationTime);
-      console.log(res);
-      setSession({
+  function onClickStopButton(){
+    if(selectedOption == null){
+      console.log("Nema dalje jer je 0 odabrana");
+    }else{
+      axios.post(`/sessions/new/${d}`,{
         userId: d,
-        sessionLength: "",
-        sessionPoints: "",
+        sessionLength: selectedOption.value,
+        sessionPoints: selectedOption.value,
         sessionFinished: false,
         synced: 0
-      })
-      axios.get(`/sessions/all/${d}`)
-      .then(res =>  {
-          setSessions(res.data);   
-      })
-    })    
-    // window.location.reload();  
+    })
+    .then(res =>{
+      console.log(selectedOption.value);
+        console.log(res);
+        setSession({
+          userId: d,
+          sessionLength: "",
+          sessionPoints: "",
+          sessionFinished: false,
+          synced: 0
+        })
+        axios.get(`/sessions/all/${d}`)
+        .then(res =>  {
+            setSessions(res.data);   
+            setTime(options[0]);
+        })
+      })   
+    } 
   }
+
+  const [time, setTime] = useState({
+    selectedOption: null
+  });
+
+  function handleChangeDropDown(selectedOption){
+    setTime({ selectedOption });
+    console.log(`Option selected:`, selectedOption);
+  };
+
+  const { selectedOption } = time;
+
+  const options = [' ','10', '20', '30','40','50','60'];
+  const defaultOption = options[0];
+
+  
+  function MyTimer({ expiryTimestamp }) {   
+
+    const {seconds, minutes, isRunning, start, restart,
+    } = useTimer({  expiryTimestamp, onExpire: () =>{
+      if(selectedOption == null){
+        console.log("Prevent default");
+      }else{
+        axios.post(`/sessions/new/${d}`,{
+          userId: d,
+          sessionLength: selectedOption.value,
+          sessionPoints: selectedOption.value,
+          sessionFinished: true,
+          synced: 0
+      })
+      .then(res =>{
+        console.log(selectedOption.value);
+          console.log(res);
+          setSession({
+            userId: d,
+            sessionLength: "",
+            sessionPoints: "",
+            sessionFinished: true,
+            synced: 0
+          })
+          axios.get(`/sessions/all/${d}`)
+          .then(res =>  {
+              setSessions(res.data);   
+              setTime(options[0]);
+          }) 
+         console.log('onExpire called')
+        })
+      }  
+    }
+  })
+ 
+      return (
+        <div style={{textAlign: 'center'}}>
+          <h2>Pomodoro Timer</h2>
+          <Dropdown options={options} onChange={handleChangeDropDown} value={selectedOption} id="dropdowntime" placeholder="Select an option" />                          
+          <div style={{fontSize: '70px'}}>
+            <span>{minutes}</span>:<span>{seconds}</span>
+          </div>
+          {/* <p>{isRunning ? 'Running' : 'Not running'}</p> */}
+          <br></br>
+          <button className="btn btn-primary startButton" 
+             onClick={() =>{
+               if(selectedOption == null){
+                 console.log("Jebiga nula je:");
+               }else{
+                const time = new Date(); 
+                time.setSeconds(time.getSeconds() + selectedOption.value * 1);
+                console.log((selectedOption.value));
+                restart(time)
+               }            
+          }}>Start</button>   
+          <button className="btn btn-danger" onClick={() => {
+            const time = new Date();
+            time.setSeconds(time.getSeconds());
+            restart(time)
+            onClickStopButton()
+          }}>Stop</button>
+        </div>);
+
+    } 
 
   function parseDateYYYYMMDD(key){ 
     const date = key.substring(0,10);    
@@ -266,6 +272,8 @@ function Home(props){
           });
   }
 
+    
+
        /************ MODALS ****************** */
        const [show, setShow] = useState(false);
        const [showDelete, setShowDelete] = useState(false);
@@ -301,7 +309,10 @@ function Home(props){
       setToggleState(index);
     };
     /******** SEARCH ********** */
-    const [searchTerm, setSearchTerm] = useState("")
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const timeForTimer = new Date();
+    timeForTimer.setSeconds(timeForTimer.getSeconds()); // 10 minutes timer
 
         if(props.user){   
                 
@@ -463,27 +474,23 @@ function Home(props){
                         <CalendarGridComponent startDay={startDay} today={today} items={items} refreshPage={refreshPage} ></CalendarGridComponent>
                     </ShadowWrapper> 
                     </div>
-                              
+                          {/**  POMODORO TIMER */}    
                     <div className="col-md-3 todo">            
                     <div className="main-section">
                         <div className="clock-holder">
-                            <div className="stopwatch">
+                            <div className="stopwatch">                           
                             <div>
-                              <h1>Pomodoro timer</h1>
-                              <div className="form-group">
-                                <input onChange={(e) => handleDurationTime(e)} checked={time.durationTime == 10} className="radiobuttontimer" type="radio" name="durationTime"  value={10}/><label> 10 min </label>
-                                <input onChange={(e) => handleDurationTime(e)} checked={time.durationTime == 25} className="radiobuttontimer" type="radio" name="durationTime"  value={25}/><label> 25 min </label>
-                                <input onChange={(e) => handleDurationTime(e)} checked={time.durationTime == 30} className="radiobuttontimer" type="radio" name="durationTime"  value={30}/><label> 30 min </label><br></br>
-                                <input onChange={(e) => handleDurationTime(e)} checked={time.durationTime == 35} className="radiobuttontimer" type="radio" name="durationTime"  value={35}/><label> 35 min </label>
-                                <input onChange={(e) => handleDurationTime(e)} checked={time.durationTime == 40} className="radiobuttontimer" type="radio" name="durationTime"  value={40}/><label> 40 min </label>
-                                <input onChange={(e) => handleDurationTime(e)} checked={time.durationTime == 45} className="radiobuttontimer" type="radio" name="durationTime"  value={45}/><label> 45 min </label><br></br>
-                              </div> 
+                              <MyTimer expiryTimestamp={selectedOption} />
                             </div>
-                                    <span> {timer}</span><br></br>
-                                <button onClick={starttimer} className="stopwatch-btn stopwatch-btn-gre">Start</button>                             
-                                <button onClick={onClickResetbutton} className="stopwatch-btn stopwatch-btn-red">Stop</button>   
-                                <hr></hr>                               
-                                <div className="sessionMap">
+                            <div>
+                              <Tooltip background="#373b40" radius="15"  fadeDuration={400} placement="top" className="Tooltip"
+                               style={{top:"50%", right: "-110px"}} content='Za svaku uspješno završenu sesiju osvajaš bodove! 
+                               Bodove možeš vidjeti na kartici "Bodovi"
+                               ..................................................................................'>
+                                  <circle>?</circle>
+                              </Tooltip>
+                            </div>                              
+                            <div className="sessionMap">                               
                             {sessions.map(item => ( 
                               <>
                                 <div className={item.sessionFinished ? "titlecontent1" : "titlecontent2"} >

@@ -40,6 +40,8 @@ export default class Nav extends Component{
                 <ul className="nav navbar-nav">
                   <li><Link className="navbar-brand" to={'/'}>Home </Link></li>                  
                   <li><Link className="navbar-brand" to={'/notes'}>Notes </Link></li>
+                  <li><Link className="navbar-brand" to={'/bodovi'}>Bodovi </Link></li>
+                  <li><Link className="navbar-brand" to={'/habit'}>Habbit tracker </Link></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                   <div className="collapse navbar-collapse" id="navbarNav">            

@@ -9,6 +9,7 @@ import Login from './components/Login.component';
 import Register from './components/Register.component';
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import axios from 'axios';
+import { HabbitTracker } from './components/HabitTracker.component';
 
   export default class App extends Component {
 
@@ -43,6 +44,7 @@ import axios from 'axios';
                 <Route exact path="/" component={() => <Home user={this.state.user}/>}/>
                 <Route exact path="/notes" component={() => <NotesComponent user={this.state.user}/>}/>
                 <Route exact path="/bodovi" component={() => <Points user={this.state.user}/>}/>
+                <Route exact path="/habit" component={() => <HabbitTracker user={this.state.user}/>}/>
               </Switch>
               <div className={this.state.user === true ? "auth-inner" : ""}>
                 <Switch>

@@ -20,7 +20,7 @@ function Points(props){
 
     const [sessions, setSessions] = useState([]); 
 
-    function parseDateYYYYMMDD(key){ 
+    function parseDateYYYYMMDD(key){  //Ne koristim za sada
         const date = key.substring(0,10);    
         const yyyy = date.substring(0,4);
         const mm = date.substring(5,7);
@@ -53,16 +53,16 @@ function Points(props){
     function Congrats(){
         var div = '';
         if(GetPoint() <= 200 && GetPoint() > 0){
-            div += 'Čestitamo sada ste na razini "Početnik"';
+            div += 'Čestitamo sada ste na razini "LEVEL 1"';
         }
         if(GetPoint() <= 400 && GetPoint() > 200){
-            div += ' Čestitamo sada ste na razini "Četnik"';
+            div += ' Čestitamo sada ste na razini "LEVEL 2"';
         }
         if(GetPoint() <= 600 && GetPoint() > 400){
-            div += ' Čestitamo sada ste na razini "Master"';
+            div += ' Čestitamo sada ste na razini "LEVEL 3"';
         }
         if(GetPoint() <= 800 && GetPoint() > 600){
-            div += ' Čestitamo sada ste na razini "Pro master"';
+            div += ' Čestitamo sada ste na razini "LEVEL 4"';
         }
         if(GetPoint() == 0){
             div += ' Nema osvojenih bodova!';
@@ -83,9 +83,9 @@ function Points(props){
                 </div><br></br>
                 <div className="pointdiv">
                     <div className="row">  
-                    <div class="col-sm-1"></div>                          
+                    <div className="col-sm-1"></div>                          
                         <div className="col-sm-4 step1">                                             
-                                <h3>Početnik</h3>
+                                <h3>LEVEL 1</h3>
                             <div className="ProgresDiv" style={{ width: 200, height: 200 }}>
                                 <CircularProgressbar value={GetPoint()} minValue={0} maxValue={200} 
                                 text={GetPoint() >=200 ?  `200`  : `${GetPoint()}`} strokeWidth={15} 
@@ -97,9 +97,9 @@ function Points(props){
                                 })}/>
                             </div>
                         </div>
-                        <div class="col-sm-2"></div>   
+                        <div className="col-sm-2"></div>   
                         <div className="col-sm-4 step2">                                             
-                                <h3>Četnik</h3>
+                                <h3>LEVEL 2</h3>
                             <div className="ProgresDiv" style={{ width: 200, height: 200 }}>
                                 <CircularProgressbar value={GetPoint()} minValue={0} maxValue={400}
                                 text={GetPoint() >=400 ?  `400`  : `${GetPoint()}`} strokeWidth={15} 
@@ -111,12 +111,12 @@ function Points(props){
                                 })}/>
                             </div>
                         </div> 
-                        <div class="col-sm-1"></div>                     
+                        <div className="col-sm-1"></div>                     
                     </div> <br></br>
                     <div className="row">  
-                        <div class="col-sm-1"></div>                              
+                        <div className="col-sm-1"></div>                              
                         <div className="col-sm-4 step3">                                             
-                                <h3>Master</h3>
+                                <h3>LEVEL 3</h3>
                             <div className="ProgresDiv" style={{ width: 200, height: 200}}>
                                 <CircularProgressbar value={GetPoint()} minValue={0} maxValue={600} 
                                 text={GetPoint() >=600 ?  `600`  : `${GetPoint()}`} strokeWidth={15} 
@@ -128,9 +128,9 @@ function Points(props){
                                 })}/>
                             </div>
                         </div>
-                        <div class="col-sm-2"></div>    
+                        <div className="col-sm-2"></div>    
                         <div className="col-sm-4 step4">                                             
-                                <h3>Pro master</h3>
+                                <h3>LEVEL 4</h3>
                             <div className="ProgresDiv" style={{ width: 200, height: 200 }}>
                                 <CircularProgressbar value={GetPoint()} minValue={0} maxValue={800} 
                                 text={GetPoint() >=800 ?  `800`  : `${GetPoint()}`} strokeWidth={15} 
@@ -142,7 +142,7 @@ function Points(props){
                                 })}/>
                             </div>
                         </div>   
-                        <div class="col-sm-1"></div>                    
+                        <div className="col-sm-1"></div>                    
                     </div> <br></br><br></br>
                   
                 </div>                              

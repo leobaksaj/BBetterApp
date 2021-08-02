@@ -10,7 +10,7 @@ function TablePoint(){
 return(       
     <div className="col-sm">
     <h3>Bodovi</h3>
-    <table class="tablePoints table table-striped">
+    <table className="tablePoints table table-striped">
         <thead>
             <tr>           
             <th scope="col">Naziv</th>
@@ -19,19 +19,19 @@ return(
         </thead>
         <tbody>
             <tr>           
-            <td>Početnik</td>
+            <td>LEVEL 1</td>
             <td>0 - 200</td>                               
             </tr>
             <tr>           
-            <td>Četnik</td>
+            <td>LEVEL 2</td>
             <td>200 - 400</td>                               
             </tr>
             <tr>          
-            <td>Master</td>
+            <td>LEVEL 3</td>
             <td>400 - 600</td>                                
             </tr>
             <tr>            
-            <td>Pro master</td>
+            <td>LEVEL 3</td>
             <td>600 - 800</td>                                
             </tr>
         </tbody>

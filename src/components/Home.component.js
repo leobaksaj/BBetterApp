@@ -358,15 +358,14 @@ function Home(props){
                                       <FontAwesomeIcon icon={faCheck} /></button> 
                                     <button onClick={() => handleShowDelete(item._id)} className="btn btn-danger NotesBtn">
                                       <FontAwesomeIcon icon={faTrash} /></button>
-                                    </div>                                    
+                                  </div>                                    
                                         <p>{item.eventTitle}</p>                               
                                         <p>{item.eventDate}</p>                                                                       
-                                    </div>
-                                  </div>               
+                                  </div>
+                              </div>               
                           </>)).reverse()}  
                           </div>
                           </div>
-
                           <div className={toggleState === 2 ? "content  active-content" : "content"}>
                             <div>
                               <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." className="form-control searchNotes"></input>

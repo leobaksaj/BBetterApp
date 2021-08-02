@@ -43,7 +43,7 @@ export default class Nav extends Component{
                   <li><Link className="navbar-brand" to={'/bodovi'}>Bodovi </Link></li>
                   <li><Link className="navbar-brand" to={'/habit'}>Habbit tracker </Link></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right">
+                <ul className="nav navbar-nav navbar-right">
                   <div className="collapse navbar-collapse" id="navbarNav">            
                   {buttons}
                   </div>

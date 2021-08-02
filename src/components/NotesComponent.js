@@ -242,7 +242,7 @@ function NotesComponent(props){
                     <div className="content-tabs">   
                         <div className={toggleState === 1 ? "content  active-content" : "content"}>   
                             <div>
-                                <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." class="form-control searchNotes"></input>
+                                <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." className="form-control searchNotes"></input>
                             </div>                 
                             <h1>Notes</h1>
                             <div className="sessionMapNotes">    
@@ -274,7 +274,7 @@ function NotesComponent(props){
 
                         <div className={toggleState === 2 ? "content  active-content" : "content"}>     
                             <div>
-                                <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." class="form-control searchNotes" ></input>
+                                <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." className="form-control searchNotes" ></input>
                             </div>                  
                             <h1>Notes</h1>
                             <div className="sessionMapNotes">    

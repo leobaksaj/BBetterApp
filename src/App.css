@@ -174,8 +174,7 @@
   padding-left: 10rem;
   padding-top: 0px;
   width: 100%;
-  height: 40%;
-  
+  height: 40%;  
 }
 
 .ProgresDiv{
@@ -245,22 +244,11 @@
 }
 /************************************/
 
-
 .main-section {
   background: transparent;
   width: 93%;
   height: auto;
   margin-left: 3%;
-}
-
-.clock-holder {
-  width: 100%;
-  background: #fff;
-  position: relative;
-}
-
-.radiobuttontimer{
-  margin: 2%;
 }
 
 .stopwatch {
@@ -276,47 +264,6 @@
   border-radius: 5px;
   width: auto;
 }
-
-.stopwatch .stopwatch-btn {
-  background: #fff;
-  margin-top: 10px;
-  margin-left: 5px;
-  border: none;
-  padding: 08px 15px;
-  font-size: 16px;
-  text-transform: uppercase;
-  width: 7rem;
-  transition: background 1s;
-  cursor: pointer;
-  margin-bottom: 3%;
-}
-.stopwatch .stopwatch-btn-red{
-  border: 2px solid #C85454;
-  color: #C85454;
-}
-
-
-.stopwatch .stopwatch-btn-gre{
-  border: 2px solid #00ABA9;
-  color: #00ABA9;
-}
-.stopwatch .stopwatch-btn-red:hover {
-  background: #C85454;
-  border: 2px solid #C85454;
-  color: #fff;
-}
-.stopwatch .stopwatch-btn-yel:hover {
-  background: #FFC900;
-  border: 2px solid #FFC900;
-  color: #fff;
-}
-.stopwatch .stopwatch-btn-gre:hover {
-  background: #00ABA9;
-  border: 2px solid #00ABA9;
-  color: #fff;
-}
-
-
 /********  NOTES  ***************/
 
 .notes{
@@ -435,4 +382,11 @@
 
 .active-content {
   display: block;
+}
+
+/*************** HABBIT TRACKER **********************/
+
+.habitMap{
+  height: 5rem;
+  width: 100%; 
 }

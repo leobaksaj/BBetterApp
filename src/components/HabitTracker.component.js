@@ -59,10 +59,10 @@ function HabbitTracker(props){
 
     function handleShow(){    
         setShow(true);  
-        // let titleError = "";
-        // let eventError = "";
-        // let timeError = "";
-        // setEvents({ titleError, eventError, timeError });
+        let titleError = "";
+        let startError = "";
+        let intentionError = "";
+        serError({ titleError, startError, intentionError });
     };
 
     let habitID = "";
@@ -75,46 +75,78 @@ function HabbitTracker(props){
     };
     
     function handle(e){
-        // const newevent = {...event };
-        // newevent[e.target.id] = e.target.value;
-        // setEvents(newevent);
+        const newhabit = {...habit };
+        newhabit[e.target.id] = e.target.value;
+        setHabit(newhabit);
     }
+
+    const [error, serError] = useState({
+        titleError: "",
+        startError: "",
+        intentionError: "",
+    });
+
+    const validate = () => {
+        let titleError = "";
+        let startError = "";
+        let intentionError = "";
+    
+        if (!habit.habitTitle) {
+          titleError = "Title cannot be blank!";
+        }    
+        if (!habit.start) {
+            startError = "Please select an habit type!";
+        }
+        if (!habit.intention) {
+            intentionError = "Namjera cannot be blank!!";
+        }    
+        if (titleError || startError || intentionError) {
+            serError({ titleError, startError, intentionError });
+          return false;
+        }    
+        return true;
+      };
+
 
     function submit(e){      
         e.preventDefault();
-        // const isValid = validate();
-        // if (isValid) {
-        // axios.post('/events/new',{
-        //     userId: d,
-        //     eventTitle: event.eventTitle,
-        //     eventDetails: "event.eventDetails",
-        //     eventDate: curdate +" at "+ event.eventDate,            
-        //     eventType: event.eventType,
-        //     eventChecked: false,
-        //     synced: 0
-        // })
-        // .then(res =>{
-        //     setEvents({
-        //         userId: d,
-        //         eventTitle: "",
-        //         eventDetails: "event.eventDetails",
-        //         eventDate: "",            
-        //         eventType: 0,
-        //         eventChecked: false,
-        //         synced: 0
-        //     });
-        //     handleClose();
-        //     refreshPage();
-        // })
-        // .catch(e => {
-        //     setError({
-        //     err: "Something is wrong. Try again!"
-        // })
-        // // console.log(err);
-        // })
-        // }
+        let todaycurr = new Date().toLocaleDateString();       
+        const dd = todaycurr.substring(0,2);
+        const mm = todaycurr.substring(4,6);
+        const yyyy = todaycurr.substring(8,12);
+        const date11 = dd +"."+mm+"."+yyyy;
+        console.log(date11);
+        const isValid = validate();
+        if (isValid) {
+        axios.post('/habits/new',{
+            userId: d,
+            habitTitle: habit.habitTitle,
+            start: habit.start,
+            habitDates: [{date: date11 }],            
+            intentions: [{intention: habit.intention}]
+        })
+        .then(res =>{
+            setHabit({
+                userId: d,
+                habitTitle: habit.habitTitle,
+                start: habit.start,
+                habitDates: [{date: date11 }],            
+                intentions: [{intention: ""}]
+            });
+            handleClose();
+            refreshPage();
+        })
+        .catch(e => {
+            setError({
+            err: "Something is wrong. Try again!"
+        })
+        console.log(err.value);
+        })
+        }
                     
     };  
+
+    const [err, setError] = useState();    
 
     
 if(props.user){ 
@@ -181,7 +213,6 @@ if(props.user){
         </Modal.Body>
     </Modal>
 
-
         {/* Add habit */}
         <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -191,30 +222,25 @@ if(props.user){
             <form onSubmit={(e)=> submit(e)}>
                 <div className="form-group">
                     <label>Title</label>                  
-                    <input onChange={(e) => handle(e)} id="habbitTitle" type="text" className="form-control" placeholder="Title"></input>
-                    <div
-                        className="alert alert-danger hidden" role="alert">
+                    <input onChange={(e) => handle(e)} value={habit.habitTitle} id="habitTitle" type="text" className="form-control" placeholder="Title"/>
+                    <div style={error.titleError !== "" ? {display: "block" } : {display:"none"}} 
+                        className="alert alert-danger hidden" role="alert">{error.titleError}
                     </div>
-                </div>   
-                {/* <div className="form-group">
-                    <label>Content</label>
-                    <textarea onChange={(e) => handle(e)} value={event.eventDetails} id="eventDetails" className="form-control" type="text"  rows="3" ></textarea>
-                </div>   */}<br></br>
-                {/* <div className="form-group">
-                    <input onChange={(e) => handle(e)} checked={event.eventType == 1} type="radio" id="eventType" name="event" value={1}/> <label for="event"> Event</label><br></br>
-                    <input onChange={(e) => handle(e)} checked={event.eventType == 2} type="radio" id="eventType" name="reminder" value={2}/> <label for="reminder"> Reminder</label><br></br>
-                    <input onChange={(e) => handle(e)} checked={event.eventType == 3} type="radio" id="eventType" name="todo" value={3}/> <label for="todo"> TODO</label><br></br>
-                </div> 
-                <div style={event.eventError !== "" ? {display: "block" } : {display:"none"}} 
-                        className="alert alert-danger hidden" role="alert">{event.eventError}
+                </div>   <br></br>
+                <div className="form-group">
+                    <input onChange={(e) => handle(e)} checked={habit.start == 1} type="radio" id="start" value={1}/> <label for="start1"> Prestajem sa lošom navikom</label><br></br>
+                    <input onChange={(e) => handle(e)} checked={habit.start == 2} type="radio" id="start" value={2}/> <label for="start2"> Započinjem dobru naviku</label><br></br>
+                    <div style={error.startError !== "" ? {display: "block" } : {display:"none"}} 
+                        className="alert alert-danger hidden" role="alert">{error.startError}
                     </div>
+                 </div> {/* Start1 je kad želimo prestati sa navikom------ Start2 je kada započinjemo neku dobru naviku  */}
                 <div>
-                    <input onChange={(e) => handle(e)} value={event.eventDate} type="time"  id="eventDate" name="eventDate"/>
+                    <input onChange={(e) => handle(e)} value={habit.intention} type="text" id="intention" className="form-control" placeholder="Namjera"/>
                 </div>
-                <div style={event.timeError !== "" ? {display: "block" } : {display:"none"}} 
-                        className="alert alert-danger hidden" role="alert">{event.timeError}
+                <div style={error.intentionError !== "" ? {display: "block" } : {display:"none"}} 
+                        className="alert alert-danger hidden" role="alert">{error.intentionError}
                     </div>
-                 <hr></hr> */}
+                 <hr></hr> 
                 <div className="row">
                     <div className="col-xs-12">
                         <div className="text-right">

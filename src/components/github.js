@@ -200,24 +200,17 @@ if(props.user){
                     <label>Content</label>
                     <textarea onChange={(e) => handle(e)} value={event.eventDetails} id="eventDetails" className="form-control" type="text"  rows="3" ></textarea>
                 </div>   */}<br></br>
-                {/* <div className="form-group">
-                    <input onChange={(e) => handle(e)} checked={event.eventType == 1} type="radio" id="eventType" name="event" value={1}/> <label for="event"> Event</label><br></br>
-                    <input onChange={(e) => handle(e)} checked={event.eventType == 2} type="radio" id="eventType" name="reminder" value={2}/> <label for="reminder"> Reminder</label><br></br>
-                    <input onChange={(e) => handle(e)} checked={event.eventType == 3} type="radio" id="eventType" name="todo" value={3}/> <label for="todo"> TODO</label><br></br>
-                </div> 
-                <div style={event.eventError !== "" ? {display: "block" } : {display:"none"}} 
-                        className="alert alert-danger hidden" role="alert">{event.eventError}
-                    </div>
+               
                 <div>
                     <input onChange={(e) => handle(e)} value={event.eventDate} type="time"  id="eventDate" name="eventDate"/>
                 </div>
                 <div style={event.timeError !== "" ? {display: "block" } : {display:"none"}} 
                         className="alert alert-danger hidden" role="alert">{event.timeError}
                     </div>
-                 <hr></hr> */}
+                 <hr></hr>
                 <div className="row">
                     
-                </div> 
+                </div>
             </form>                 
         </Modal.Body>
     </Modal>

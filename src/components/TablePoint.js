@@ -1,9 +1,5 @@
-import axios from 'axios';
-import React,{useEffect,useState,useContext,useRef} from 'react';
-import moment from 'moment';
-import { CircularProgressbar } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
-import Tooltip from "react-simple-tooltip";
+import React from 'react';
+
 
 function TablePoint(){   
    

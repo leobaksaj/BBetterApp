@@ -108,8 +108,7 @@ const CalendarGridComponent = ({startDay,today,items, refreshPage}) => {
         }
         if (!event.eventDate) {
             timeError = "Please select time!";
-        }
-    
+        }    
         if (titleError || eventError || timeError) {
           setEvents({ titleError, eventError, timeError });
           return false;

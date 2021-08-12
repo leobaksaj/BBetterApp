@@ -1,9 +1,9 @@
 import axios from 'axios';
-import React,{useEffect,useState,useContext,useRef} from 'react';
+import React,{useEffect,useState} from 'react';
 import moment from 'moment';
 import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faEdit, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faPlus} from '@fortawesome/free-solid-svg-icons';
 import {Modal} from 'react-bootstrap';
 import { Switch, Route } from 'react-router-dom';
 import { HabitCalendar } from './HabitCalendar';
@@ -24,7 +24,6 @@ const Hover = styled.div`
 `;
 
 function HabbitTracker(props){
-
     let d = localStorage.getItem('data');   
     useEffect(() => {
         axios.get(`/habits/all/${d}`)
@@ -41,11 +40,20 @@ function HabbitTracker(props){
 
     const [habits, setHabits] = useState([]); 
     const [habit, setHabit] = useState([]); 
+    const [habitItem, setHabitItem] = useState([]); 
+    const [habitIID, setHabitID] = useState([]); 
 
     const refreshPage = ()=>{
         axios.get(`/habits/all/${d}`)
         .then(res =>  {
             setHabits(res.data);   
+        });
+     }    
+
+     const refreshCallgrid = ()=>{
+        axios.get(`/habits/get/${habitIID}`)
+        .then(res =>  {
+            setHabitItem(res.data.habitDates);   
         });
      }    
 
@@ -55,7 +63,9 @@ function HabbitTracker(props){
     const [showcalendar, setShowCalendar] = useState(false);
 
     const handleClose = () => setShow(false);
-    const handleCloseCalendar = () => setShowCalendar(false);
+    function handleCloseCalendar(){
+        setShowCalendar(false);
+    } 
 
     function handleShow(){    
         setShow(true);  
@@ -66,12 +76,17 @@ function HabbitTracker(props){
     };
 
     let habitID = "";
-    function handleShowCalendarModal(habID){    
-        setShowCalendar(true);  
-        setHabit(habID);      
+    function handleShowCalendarModal(habID){  
+        // setHabit(habID);     
+        setShowCalendar(true);            
         habitID = habID ;
-        console.log(habitID);
-        console.log(habit);
+        // console.log(habitID);
+        axios.get(`/habits/get/${habitID}`)
+        .then(res =>  {
+            setHabitItem(res.data.habitDates);
+            setHabitID(habitID); 
+        });
+        console.log(habitItem.map(item => item));
     };
     
     function handle(e){
@@ -115,7 +130,6 @@ function HabbitTracker(props){
         const mm = todaycurr.substring(4,6);
         const yyyy = todaycurr.substring(8,12);
         const date11 = dd +"."+mm+"."+yyyy;
-        console.log(date11);
         const isValid = validate();
         if (isValid) {
         axios.post('/habits/new',{
@@ -142,12 +156,10 @@ function HabbitTracker(props){
         })
         console.log(err.value);
         })
-        }
-                    
+        }                    
     };  
 
     const [err, setError] = useState();    
-
     
 if(props.user){ 
     const prevHandler = () =>  setToday(prev => prev.clone().subtract(1, 'month'));   //this.state.setToday.clone().subtract(1, 'month');    
@@ -172,13 +184,10 @@ if(props.user){
                             {item.habitTitle}
                         </button><br></br>                                     
                         </>))}                    
-                </table>
-                                                
+                </table>                                                
             </div>
-            <div className="col-md-1">  
-            
+            <div className="col-md-1">              
             </div>
-
         </div>
 
         {/* Open kalendar */}
@@ -198,7 +207,8 @@ if(props.user){
                         todayHandler={todayHandler}
                         nextHandler={nextHandler}>
                     </MonitorCalendar>                                             
-                        <HabitCalendar startDay={startDay} today={today} items={habit} refreshPage={refreshPage}>
+                        <HabitCalendar startDay={startDay} today={today} items={habitItem} habID={habitIID} refreshPage={refreshPage} 
+                        refreshCallGrid={refreshCallgrid}>
                         </HabitCalendar>
                 </ShadowWrapper>                
                 <div className="row">

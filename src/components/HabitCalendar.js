@@ -47,7 +47,7 @@ const CurrentDay = styled('div')`
   justify-content: center;
 `;
 
-const HabitCalendar = ({startDay,today,items, refreshPage}) => {
+const HabitCalendar = ({startDay,today,items, refreshPage, habID, refreshCallGrid}) => {
 
     let d = localStorage.getItem('data'); 
     const day = startDay.clone().subtract(1, 'day');
@@ -64,71 +64,73 @@ const HabitCalendar = ({startDay,today,items, refreshPage}) => {
         const yyyy = date.substring(6,10);
         const mm = date.substring(3,5);
         const dd = date.substring(0,2);
-        const date11 = yyyy +"-"+mm+"-"+dd;  
+        const date11 = yyyy +"-"+mm+"-"+ dd;  
+        // console.log(date11);
         return date11;
     }
     const [err, setError] = useState();    
-
-    const [habit, setHabits] = useState({
-        userId: "",
-        habitTitle: "",
-        start: 2,
-        habitDates: [{"date" : ""}],
-        intentions: [{"intention" :""}]
-    });
- 
+    const [habit, setHabit] = useState([]); 
     const [curdate, setCurrDate] = useState();
 
-    const clickCell = (key) =>{
+    const clickCellAdd = (key) =>{
         const date = new Date(key * 1000).toISOString().slice(0,19).replace('T', ''); 
         const date12 = date.substring(0,10);   
         const yyyy = date12.substring(0,4);
         const mm = date12.substring(5,7);
         const dd = date12.substring(8,10);
         const date11 = dd +"."+mm+"."+yyyy ;     
-        setCurrDate(date11);  
-        console.log(items);      
-        // handleShow();  
-        axios.patch(`/habits/date/${items}`,{
-            date: date11,                     
-        })
-        .then(res =>{
-            setHabits({
-                date: "31.06.2021",  
-            });
-            // handleClose();
-            refreshPage();
-        })
-        .catch(e => {
-            setError({
-            err: "Something is wrong. Try again!"
-        })
-        // console.log(err);
-        })           
+        setCurrDate(date11);          
+        handleShow();  
+        // items.map(item => {
+        //     if(item.date == date11){
+                // axios.patch(`/habits/date/${habID}/${item._id}`);
+                // refreshCallGrid();
+                // refreshCalGrid();
+                // console.log("Jebiga već je postavljen datum");
+            //  }else if(item.date !== date11)
+            //  {
+                axios.patch(`/habits/date/${habID}`,{
+                date: date11,                     
+                })
+                .then(res =>{
+                    setHabit({
+                        date: date11,  
+                    });
+                    refreshCallGrid();
+                    refreshCalGrid();
+                })
+                .catch(e => {
+                    setError({
+                    err: "Something is wrong. Try again!"
+                })
+                console.log(err);
+                })  
+                    
+        // })        
+        // console.log("Jebiga");                
     }
 
-    // const validate = () => {
-    //     let titleError = "";
-    //     let eventError = "";
-    //     let timeError = "";
-    
-    //     if (!event.eventTitle) {
-    //       titleError = "Title cannot be blank!";
-    //     }    
-    //     if (!event.eventType) {
-    //         eventError = "Please select an event type!";
-    //     }
-    //     if (!event.eventDate) {
-    //         timeError = "Please select time!";
-    //     }
-    
-    //     if (titleError || eventError || timeError) {
-    //       setEvents({ titleError, eventError, timeError });
-    //       return false;
-    //     }    
-    //     return true;
-    //   };
 
+    const clickCellRemove = (key) =>{
+        const date = new Date(key * 1000).toISOString().slice(0,19).replace('T', ''); 
+        const date12 = date.substring(0,10);   
+        const yyyy = date12.substring(0,4);
+        const mm = date12.substring(5,7);
+        const dd = date12.substring(8,10);
+        const date11 = dd +"."+mm+"."+yyyy ;     
+        setCurrDate(date11);          
+        handleShow();            
+        items.map(item => {
+            if(item.date == date11){
+                axios.patch(`/habits/date/${habID}/${item._id}`);
+                refreshCallGrid();
+                // refreshCalGrid();
+            console.log("Jebiga brišem");  
+        }
+    })                           
+    }
+
+  
      function submit(e){      
     //     e.preventDefault();
     //     const isValid = validate();
@@ -182,12 +184,10 @@ const HabitCalendar = ({startDay,today,items, refreshPage}) => {
     const isSelectedMonth = (day) => today.isSame(day, 'month');  
     let numrow =0;
 
-    // function refreshCalGrid(dayItem){
-    //    return  <p className={items.filter(item => (item.synced !== 3) && (item.eventChecked === false)
-    //         && (parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000))).length == 0 ? "counter0" : "counter" }>
-    //         {items.filter(item => (item.synced !== 3) && item.eventChecked === false
-    //         && (parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000))).length}</p>; 
-    // }
+    function refreshCalGrid(dayItem){      
+        return  <p className={items.filter(item => (parseDateYYYYMMDD(item.date) === getDateFromCell(dayItem.unix()+10000))).length == 0 ? "counter0" : "counter" }>
+            {items.filter(item => (parseDateYYYYMMDD(item.date) === getDateFromCell(dayItem.unix()+10000))).length} </p>; 
+    }
     
     return(        
         <>      
@@ -205,7 +205,7 @@ const HabitCalendar = ({startDay,today,items, refreshPage}) => {
             {
                 daysArray.map((dayItem) => ( 
                     <CellWrapper key={dayItem.unix()}   
-                    onClick={() => {clickCell(dayItem.unix()+10000)}}                             
+                    onClick={() => items.filter(item => (parseDateYYYYMMDD(item.date) === getDateFromCell(dayItem.unix()+10000))).length == 0 ? clickCellAdd(dayItem.unix()+10000) : clickCellRemove(dayItem.unix()+10000)}                             
                                  isWeekday={dayItem.day() === 6 || dayItem.day() === 0}
                                  isSelectedMonth={(isSelectedMonth(dayItem))}>
                         <RowInCell justifyContent ={'flex-end'}>
@@ -214,7 +214,7 @@ const HabitCalendar = ({startDay,today,items, refreshPage}) => {
                                 {isCurrentDay(dayItem) && <CurrentDay> {dayItem.format('D')}</CurrentDay> /* današnji dan  */}                                                     
                             </DayWrapper>                           
                         </RowInCell>           
-                                {/* {refreshCalGrid(dayItem)}      */}
+                                {refreshCalGrid(dayItem)}    
                     </CellWrapper>
                 ))
             }

@@ -37,7 +37,7 @@ function Points(props){
             number = number + item.sessionPoints;
             }
         })
-        return number;
+        return number - GetNegativePoint();
     }
 
     function GetNegativePoint(){
@@ -64,7 +64,13 @@ function Points(props){
         if(GetPoint() <= 800 && GetPoint() > 600){
             div += ' Čestitamo sada ste na razini "LEVEL 4"';
         }
-        if(GetPoint() == 0){
+        if(GetPoint() <= 1000 && GetPoint() > 800){
+            div += ' Čestitamo sada ste na razini "LEVEL 5"';
+        }
+        if(GetPoint() <= 1200 && GetPoint() > 1400){
+            div += ' Čestitamo sada ste na razini "LEVEL 6"';
+        }
+        if(GetPoint() <= 0){
             div += ' Nema osvojenih bodova!';
         }
         return div;
@@ -134,6 +140,37 @@ function Points(props){
                             <div className="ProgresDiv" style={{ width: 200, height: 200 }}>
                                 <CircularProgressbar value={GetPoint()} minValue={0} maxValue={800} 
                                 text={GetPoint() >=800 ?  `800`  : `${GetPoint()}`} strokeWidth={15} 
+                                styles={buildStyles({
+                                    pathColor: '#000000',
+                                    textColor: '#000000',
+                                    trailColor: '#fff',
+                                    textSize: '30px',
+                                })}/>
+                            </div>
+                        </div>   
+                        <div className="col-sm-1"></div>                    
+                    </div> <br></br><br></br>
+                    <div className="row">  
+                        <div className="col-sm-1"></div>                              
+                        <div className="col-sm-4 step3">                                             
+                                <h3>LEVEL 5</h3>
+                            <div className="ProgresDiv" style={{ width: 200, height: 200}}>
+                                <CircularProgressbar value={GetPoint()} minValue={0} maxValue={1000} 
+                                text={GetPoint() >=800 ?  `1200`  : `${GetPoint()}`} strokeWidth={15} 
+                                styles={buildStyles({
+                                    pathColor: '#000000',
+                                    textColor: '#000000',
+                                    trailColor: '#fff',
+                                    textSize: '30px',
+                                })}/>
+                            </div>
+                        </div>
+                        <div className="col-sm-2"></div>    
+                        <div className="col-sm-4 step4">                                             
+                                <h3>LEVEL 6</h3>
+                            <div className="ProgresDiv" style={{ width: 200, height: 200 }}>
+                                <CircularProgressbar value={GetPoint()} minValue={0} maxValue={1200} 
+                                text={GetPoint() >=1000 ?  `1000`  : `${GetPoint()}`} strokeWidth={15} 
                                 styles={buildStyles({
                                     pathColor: '#000000',
                                     textColor: '#000000',

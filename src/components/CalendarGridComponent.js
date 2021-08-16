@@ -1,11 +1,8 @@
-import React,{useEffect,useState} from 'react';
+import React,{useState} from 'react';
 import moment from "moment";
 import axios from 'axios';
 import styled from 'styled-components';
-import {Button} from 'react-bootstrap';
 import {Modal} from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 const GridWrapper = styled.div`
 	display: grid;
@@ -120,7 +117,7 @@ const CalendarGridComponent = ({startDay,today,items, refreshPage}) => {
         e.preventDefault();
         const isValid = validate();
         if (isValid) {
-        axios.post('/events/new',{
+        axios.post(`/events/new/${d}`,{
             userId: d,
             eventTitle: event.eventTitle,
             eventDetails: "event.eventDetails",
@@ -171,8 +168,7 @@ const CalendarGridComponent = ({startDay,today,items, refreshPage}) => {
   
     const isCurrentDay = (day) => moment().isSame(day, 'day');
     const isSelectedMonth = (day) => today.isSame(day, 'month');  
-    let numrow =0;
-
+   
     function refreshCalGrid(dayItem){
        return  <p className={items.filter(item => (item.synced !== 3) && (item.eventChecked === false)
             && (parseDateYYYYMMDD(item.eventDate) === getDateFromCell(dayItem.unix()+10000))).length == 0 ? "counter0" : "counter" }>

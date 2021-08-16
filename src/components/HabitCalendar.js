@@ -1,11 +1,7 @@
-import React,{useEffect,useState} from 'react';
+import React,{useState} from 'react';
 import moment from "moment";
 import axios from 'axios';
 import styled from 'styled-components';
-import {Button} from 'react-bootstrap';
-import {Modal} from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 const GridWrapper = styled.div`
 	display: grid;

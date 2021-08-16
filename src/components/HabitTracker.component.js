@@ -5,9 +5,10 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus} from '@fortawesome/free-solid-svg-icons';
 import {Modal} from 'react-bootstrap';
-import { Switch, Route } from 'react-router-dom';
+// import { Switch, Route } from 'react-router-dom';
 import { HabitCalendar } from './HabitCalendar';
 import { MonitorCalendar } from './MonitorCalendar';
+
 
 const ShadowWrapper = styled('div')`
   border-top: 1px solid #737374;
@@ -65,6 +66,7 @@ function HabbitTracker(props){
     const handleClose = () => setShow(false);
     function handleCloseCalendar(){
         setShowCalendar(false);
+        refreshPage();
     } 
 
     function handleShow(){    
@@ -86,7 +88,6 @@ function HabbitTracker(props){
             setHabitItem(res.data.habitDates);
             setHabitID(habitID); 
         });
-        console.log(habitItem.map(item => item));
     };
     
     function handle(e){
@@ -159,6 +160,13 @@ function HabbitTracker(props){
         }                    
     };  
 
+    function getDays(){
+        var dt = new Date();
+        var month = dt.getMonth();
+        var year = dt.getFullYear();
+        var daysInMonth = new Date(year, month, 0).getDate();
+        return daysInMonth;
+    }
     const [err, setError] = useState();    
     
 if(props.user){ 
@@ -176,13 +184,17 @@ if(props.user){
                 <table className="table">
                 <thead>
                     <tr>
-                    <th scope="col"></th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>                                                        
-                    {habits.map(item => (<> <br></br>                    
-                        <button className="btn btn-primary habitMap" onClick={() => handleShowCalendarModal(item._id)}>
-                            {item.habitTitle}
-                        </button><br></br>                                     
+                    {habits.map(item => (<> <br></br>                                   
+                        <button className={item.start === 1 ? "btn btn-primary habitMap" : "btn btn-success habitMap"} onClick={() => handleShowCalendarModal(item._id)}>
+                           <div className="row">
+                               <div className="col-sm-10">{item.habitTitle}</div>
+                               <div className="col-sm-2">{((item.habitDates.map(item => item._id).length) /getDays()*100 ).toFixed(2) + " %"}</div>
+                           </div>
+                        </button>                                                        
+                        <br></br>                                     
                         </>))}                    
                 </table>                                                
             </div>

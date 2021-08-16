@@ -50,7 +50,7 @@ function NotesComponent(props){
         e.preventDefault();
         // const isValid = validate();
         // if (isValid) {          
-        axios.post('/notes/new',{
+        axios.post(`/notes/new/${d}`,{
             userId: d,
             noteTitle: note.noteTitle,
             noteContent: note.noteContent,
@@ -94,13 +94,14 @@ function NotesComponent(props){
             synced: 3
         });
         deleteNotes(note);
-        // console.log(note);         
+         console.log(note);         
     };
     
     function deleteNotes(note1){
+        console.log(note1._id);
         
         axios.put(`/notes/put/${note1._id}`,{
-            _id: note1._id,
+             _id: note1._id,
             userId: d,
             noteTitle:  note.noteTitle,
             noteContent:  note.noteContent,
@@ -262,10 +263,10 @@ function NotesComponent(props){
                                         <div className="row buttoninnotes">
                                             <button onClick={() => handleShow(item._id)} className="btn btn-secondary NotesBtn"><FontAwesomeIcon icon={faEdit} /></button> 
                                             <button onClick={() => handleShowDelete(item._id)} className="btn btn-danger NotesBtn"><FontAwesomeIcon icon={faTrash} /></button>
-                                        </div>
+                                       </div>
                                         <p value={item.noteTitle} id="noteTitle">{item.noteTitle}</p>
                                         {(<span>{parseDateDDMMYYYY(item.createdAt.substring(0,10))}</span>)}
-                                        <p>{item.noteContent}</p>
+                                        <p>{item.noteContent}</p>                                       
                                     </div>                                
                                 </div> </>))}                                                            
                             </div> 

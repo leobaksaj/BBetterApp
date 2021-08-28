@@ -152,7 +152,7 @@ function Points(props){
                     </div> <br></br><br></br>
                     <div className="row">  
                         <div className="col-sm-1"></div>                              
-                        <div className="col-sm-4 step3">                                             
+                        <div className="col-sm-4 step5">                                             
                                 <h3>LEVEL 5</h3>
                             <div className="ProgresDiv" style={{ width: 200, height: 200}}>
                                 <CircularProgressbar value={GetPoint()} minValue={0} maxValue={1000} 
@@ -166,7 +166,7 @@ function Points(props){
                             </div>
                         </div>
                         <div className="col-sm-2"></div>    
-                        <div className="col-sm-4 step4">                                             
+                        <div className="col-sm-4 step6">                                             
                                 <h3>LEVEL 6</h3>
                             <div className="ProgresDiv" style={{ width: 200, height: 200 }}>
                                 <CircularProgressbar value={GetPoint()} minValue={0} maxValue={1200} 

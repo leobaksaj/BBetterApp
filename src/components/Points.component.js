@@ -181,6 +181,7 @@ function Points(props){
                         </div>   
                         <div className="col-sm-1"></div>                    
                     </div> <br></br><br></br>
+                    {/* <ProgressBarLine value={75}/> */}
                   
                 </div>                              
             </div>

@@ -7,7 +7,7 @@ import axios from 'axios';
 
 
 
-axios.defaults.baseURL = 'https://secret-temple-10001.herokuapp.com/bbetter';
+axios.defaults.baseURL = 'https://bbetter.herokuapp.com/bbetter';
 axios.defaults.headers.common['Authorization'] ='Bearer ' + localStorage.getItem('data');
 
 ReactDOM.render(

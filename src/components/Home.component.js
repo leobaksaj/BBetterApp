@@ -51,7 +51,7 @@ function Home(props){
         axios.get(`/sessions/all/${d}`)
         .then(res =>  {
             setSessions(res.data);   
-        });         
+        });   
     },[]);
 
     /////////////////////// KRAJ KALENDARA //////////////////
@@ -66,33 +66,89 @@ function Home(props){
   });  
 
   function onClickStopButton(){
+    var elem = document.documentElement;
     if(selectedOption == null){
       console.log("Nema dalje jer je 0 odabrana");
     }else{
-      axios.post(`/sessions/new/${d}`,{
-        userId: d,
-        sessionLength: selectedOption.value,
-        sessionPoints: selectedOption.value,
-        sessionFinished: false,
-        synced: 0
-    })
-    .then(res =>{
-      console.log(selectedOption.value);
-        console.log(res);
-        setSession({
+      if(elem.offsetHeight == window.screen.height && elem.offsetWidth == window.screen.width){
+        console.log("U fulu je "+ window.screen.height);
+        axios.post(`/sessions/new/${d}`,{
           userId: d,
-          sessionLength: "",
-          sessionPoints: "",
+          sessionLength: selectedOption.value,
+          sessionPoints: selectedOption.value,
           sessionFinished: false,
           synced: 0
-        })
-        axios.get(`/sessions/all/${d}`)
-        .then(res =>  {
-            setSessions(res.data);   
-            setTime(options[0]);
-        })
-      })   
+        }).then(res =>{
+          console.log(selectedOption.value);
+            console.log(res);
+            setSession({
+              userId: d,
+              sessionLength: "",
+              sessionPoints: "",
+              sessionFinished: false,
+              synced: 0
+            })
+            axios.get(`/sessions/all/${d}`)
+            .then(res =>  {
+                setSessions(res.data);   
+                setTime(options[0]);
+                closeFullscreen();
+            })
+          })   
+      }else //if(elem.offsetHeight != window.screen.height && elem.offsetWidth !=  window.screen.width){
+      {
+        console.log("Nije u fulu ");
+        axios.post(`/sessions/new/${d}`,{
+          userId: d,
+          sessionLength: selectedOption.value,
+          sessionPoints: selectedOption.value,
+          sessionFinished: false,
+          synced: 0
+        }).then(res =>{
+          console.log(selectedOption.value);
+            console.log(res);
+            setSession({
+              userId: d,
+              sessionLength: "",
+              sessionPoints: "",
+              sessionFinished: false,
+              synced: 0
+            })
+            axios.get(`/sessions/all/${d}`)
+            .then(res =>  {
+                setSessions(res.data);   
+                setTime(options[0]);
+            })
+          })   
+      }
     } 
+  }
+
+  function handleResize() {
+    var elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+      elem.msRequestFullscreen();
+    }
+  }    
+  function closeFullscreen() {
+    // var elem = document.documentElement;
+    // if(elem.offsetHeight == window.screen.height && elem.offsetWidth == window.screen.width){
+    //   console.log("U fulu je "+ window.screen.height);
+    // }else //if(elem.offsetHeight != window.screen.height && elem.offsetWidth !=  window.screen.width){
+    //   {
+    //   console.log("Nije u fulu ");
+    // }
+    if ( document.fullscreenElement === true) {
+      document.exitFullscreen();
+    } else if ( document.webkitExitFullscreen) { /* Safari */
+      document.webkitExitFullscreen();
+    } else if ( document.msExitFullscreen) { /* IE11 */
+      document.msExitFullscreen();
+    }
   }
 
   const [time, setTime] = useState({
@@ -138,6 +194,7 @@ function Home(props){
           .then(res =>  {
               setSessions(res.data);   
               setTime(options[0]);
+              closeFullscreen();
           }) 
          console.log('onExpire called')
         })
@@ -157,12 +214,13 @@ function Home(props){
           <button className="btn btn-primary startButton" 
              onClick={() =>{
                if(selectedOption == null){
-                 console.log("Jebiga nula je:");
+                 console.log("Odabrana je nula");
                }else{
                 const time = new Date(); 
                 time.setSeconds(time.getSeconds() + selectedOption.value * 1);
                 console.log((selectedOption.value));
                 restart(time)
+                handleResize()
                }            
           }}>Start</button>   
           <button className="btn btn-danger" onClick={() => {
@@ -477,7 +535,7 @@ function Home(props){
                     <div className="col-md-3 todo">            
                     <div className="main-section">
                         <div className="clock-holder">
-                            <div className="stopwatch">                           
+                            <div className="stopwatch">                        
                             <div>
                               <MyTimer expiryTimestamp={selectedOption} />
                             </div>

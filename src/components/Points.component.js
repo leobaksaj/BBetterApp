@@ -7,6 +7,8 @@ import Tooltip from "react-simple-tooltip";
 import {TablePoint} from './TablePoint';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import {ProgressBarLine} from 'react-progressbar-line';
+
 
 function Points(props){    
 
@@ -94,7 +96,7 @@ function Points(props){
                                 <h3>LEVEL 1</h3>
                             <div className="ProgresDiv" style={{ width: 200, height: 200 }}>
                                 <CircularProgressbar value={GetPoint()} minValue={0} maxValue={200} 
-                                text={GetPoint() >=200 ?  `200`  : `${GetPoint()}`} strokeWidth={15} 
+                                text={GetPoint() >=200 ?  `200`  : `${GetPoint()}` && GetPoint() <0 ?  `0`  : `${GetPoint()}`} strokeWidth={15} 
                                  styles={buildStyles({
                                     pathColor: '#000000',
                                     textColor: '#000000',
@@ -108,7 +110,7 @@ function Points(props){
                                 <h3>LEVEL 2</h3>
                             <div className="ProgresDiv" style={{ width: 200, height: 200 }}>
                                 <CircularProgressbar value={GetPoint()} minValue={0} maxValue={400}
-                                text={GetPoint() >=400 ?  `400`  : `${GetPoint()}`} strokeWidth={15} 
+                                text={GetPoint() >=400 ?  `400`  : `${GetPoint()}` && GetPoint() <0 ?  `0`  : `${GetPoint()}`} strokeWidth={15} 
                                 styles={buildStyles({
                                     pathColor: '#000000',
                                     textColor: '#000000',
@@ -125,7 +127,7 @@ function Points(props){
                                 <h3>LEVEL 3</h3>
                             <div className="ProgresDiv" style={{ width: 200, height: 200}}>
                                 <CircularProgressbar value={GetPoint()} minValue={0} maxValue={600} 
-                                text={GetPoint() >=600 ?  `600`  : `${GetPoint()}`} strokeWidth={15} 
+                                text={GetPoint() >=600 ?  `600`  : `${GetPoint()}` && GetPoint() <0 ?  `0`  : `${GetPoint()}`} strokeWidth={15} 
                                 styles={buildStyles({
                                     pathColor: '#000000',
                                     textColor: '#000000',
@@ -139,7 +141,7 @@ function Points(props){
                                 <h3>LEVEL 4</h3>
                             <div className="ProgresDiv" style={{ width: 200, height: 200 }}>
                                 <CircularProgressbar value={GetPoint()} minValue={0} maxValue={800} 
-                                text={GetPoint() >=800 ?  `800`  : `${GetPoint()}`} strokeWidth={15} 
+                                text={GetPoint() >=800 ?  `800`  : `${GetPoint()}` && GetPoint() <0 ?  `0`  : `${GetPoint()}`} strokeWidth={15} 
                                 styles={buildStyles({
                                     pathColor: '#000000',
                                     textColor: '#000000',
@@ -156,7 +158,7 @@ function Points(props){
                                 <h3>LEVEL 5</h3>
                             <div className="ProgresDiv" style={{ width: 200, height: 200}}>
                                 <CircularProgressbar value={GetPoint()} minValue={0} maxValue={1000} 
-                                text={GetPoint() >=800 ?  `1200`  : `${GetPoint()}`} strokeWidth={15} 
+                                text={GetPoint() >=800 ?  `1200`  : `${GetPoint()}` && GetPoint() <0 ?  `0`  : `${GetPoint()}`} strokeWidth={15} 
                                 styles={buildStyles({
                                     pathColor: '#000000',
                                     textColor: '#000000',
@@ -170,7 +172,7 @@ function Points(props){
                                 <h3>LEVEL 6</h3>
                             <div className="ProgresDiv" style={{ width: 200, height: 200 }}>
                                 <CircularProgressbar value={GetPoint()} minValue={0} maxValue={1200} 
-                                text={GetPoint() >=1000 ?  `1000`  : `${GetPoint()}`} strokeWidth={15} 
+                                text={GetPoint() >=1000 ?  `1000`  : `${GetPoint()}` && GetPoint() <0 ?  `0`  : `${GetPoint()}`} strokeWidth={15} 
                                 styles={buildStyles({
                                     pathColor: '#000000',
                                     textColor: '#000000',
@@ -181,8 +183,23 @@ function Points(props){
                         </div>   
                         <div className="col-sm-1"></div>                    
                     </div> <br></br><br></br>
-                    {/* <ProgressBarLine value={75}/> */}
-                  
+                    <div className="row"> 
+                    <div className="col-sm-4"> </div>
+                        <div className="col-sm-5 step7">     
+                        <h4> Negativni bodovi </h4>
+                        <div className="ProgresDiv" style={{ width: 200, height: 200 }}>
+                                    <CircularProgressbar value={GetNegativePoint()} minValue={0} maxValue={200} 
+                                    text={GetNegativePoint() <0 ?  `0`  : `${GetNegativePoint()}`} strokeWidth={15} 
+                                    styles={buildStyles({
+                                        pathColor: '#000000',
+                                        textColor: '#000000',
+                                        trailColor: '#fff',
+                                        textSize: '30px',
+                                    })}/>
+                        </div>
+                        </div>
+                        <div className="col-sm-5"> </div>
+                    </div>
                 </div>                              
             </div>
         </div>      

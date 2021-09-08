@@ -51,7 +51,8 @@ function Home(props){
         axios.get(`/sessions/all/${d}`)
         .then(res =>  {
             setSessions(res.data);   
-        });   
+        });  
+        
     },[]);
 
     /////////////////////// KRAJ KALENDARA //////////////////
@@ -242,6 +243,15 @@ function Home(props){
     // console.log(date11);  
     return date11;
 }
+function parseDateMMDDYYYY(key){ 
+  const date = key.substring(0,10);    
+  const yyyy = date.substring(6,10);
+  const mm = date.substring(3,5);
+  const dd = date.substring(0,2);
+  const date11 = yyyy +"-"+mm+"-"+dd;
+  console.log(date11);  
+  return date11;
+}
       
       /************** DELETEE EVENTS ********************** */
 
@@ -376,7 +386,9 @@ function Home(props){
                 
             const prevHandler = () =>  setToday(prev => prev.clone().subtract(1, 'month'));   //this.state.setToday.clone().subtract(1, 'month');    
             const todayHandler = () => setToday(moment());
-            const nextHandler = () =>  setToday(prev => prev.clone().add(1, 'month'));
+            const nextHandler = () =>  setToday(prev => prev.clone().add(1, 'month')); 
+             const itemsSort= items.sort((a,b) => new Date(parseDateMMDDYYYY(a.eventDate)) - new Date(parseDateMMDDYYYY(b.eventDate))).reverse();
+          
             return(<>
                 <div className="row mainrow">
                     {/* TODO LISTA */}
@@ -397,7 +409,7 @@ function Home(props){
                         </div>  
                         <h4>Event</h4>  
                         <div className="sessionMapEvent">                     
-                            {items.filter((item) => {
+                            {itemsSort.filter((item) => {
                               if(searchTerm =="" &&  item.synced !== 3 && item.eventType === 1 && item.eventChecked === false ){
                                   return item
                               }else if(item.synced !== 3 && item.eventType === 1 && item.eventChecked === false
@@ -406,8 +418,7 @@ function Home(props){
                                  && item.eventDate.toLowerCase().includes(searchTerm.toLowerCase()) ){
                                   return item
                               }                             
-                            })
-                            .map(item => ( 
+                            }).map((item) => ( 
                             <>
                               <div className="row titlecontent">
                                 <div className="titlenote">
@@ -430,7 +441,7 @@ function Home(props){
                             </div>  
                             <h4>Reminder</h4>  
                             <div className="sessionMapEvent">                    
-                            {items.filter((item) => {
+                            {itemsSort.filter((item) => {
                               if(searchTerm =="" &&  item.synced !== 3 && item.eventType === 2 && item.eventChecked === false ){
                                   return item
                               }else if(item.synced !== 3 && item.eventType === 2 && item.eventChecked === false
@@ -451,7 +462,7 @@ function Home(props){
                                         <p>{item.eventDate}</p> 
                                   </div>
                                 </div>               
-                          </>))}  
+                          </>)).reverse()}  
                           </div>
                           </div>
                           <div className={toggleState === 3 ? "content  active-content" : "content"}>
@@ -460,7 +471,7 @@ function Home(props){
                             </div>  
                             <h4>TODO</h4>   
                             <div className="sessionMapEvent">                    
-                            {items.filter((item) => {
+                            {itemsSort.filter((item) => {
                               if(searchTerm =="" &&  item.synced !== 3 && item.eventType === 3 && item.eventChecked === false ){
                                   return item
                               }else if(item.synced !== 3 && item.eventType === 3 && item.eventChecked === false
@@ -481,7 +492,7 @@ function Home(props){
                                         <p>{item.eventDate}</p> 
                                   </div>
                                 </div>                  
-                              </>))}  
+                              </>)).reverse()}  
                               </div>
                               </div>
                               <div className={toggleState === 4 ? "content  active-content" : "content"}>
@@ -490,7 +501,7 @@ function Home(props){
                                 </div>  
                                 <h4>All</h4>   
                                 <div className="sessionMapEvent">                 
-                                   {items.filter((item) => {
+                                   {itemsSort.filter((item) => {
                                     if(searchTerm =="" &&  item.synced !== 3 && item.eventChecked === false){
                                         return item
                                     }else if(item.synced !== 3 && item.eventChecked === false
@@ -512,7 +523,7 @@ function Home(props){
                                         <p>{item.eventDate}</p> 
                                   </div>
                                 </div>                  
-                              </>))}  
+                              </>)).reverse()}  
                               </div>
                               </div>
                         </div>                                                    

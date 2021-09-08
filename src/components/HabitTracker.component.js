@@ -8,6 +8,7 @@ import {Modal} from 'react-bootstrap';
 // import { Switch, Route } from 'react-router-dom';
 import { HabitCalendar } from './HabitCalendar';
 import { MonitorCalendar } from './MonitorCalendar';
+import picture from './picture/writing.jpg';
 
 
 const ShadowWrapper = styled('div')`
@@ -198,8 +199,12 @@ if(props.user){
                         </>))}                    
                 </table>                                                
             </div>
-            <div className="col-md-1">              
+            <div className="todo col-md-2 habit">
+                <center><p className="habitP">Dodaj svoj habit i prati napredak!</p></center>
+                <img className="iconhabit" src={picture} alt="Write icon"/>
+                <center><p className="habitP">Ne zaboravi evidentirati napredak!!!</p></center>
             </div>
+         
         </div>
 
         {/* Open kalendar */}

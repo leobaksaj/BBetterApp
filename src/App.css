@@ -254,6 +254,12 @@
   padding-top: 2%;
   padding-bottom: 2%;
 }
+.step7{
+  background-color: #005ce6;
+  border-radius: 12px;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
 /************************************/
 
 .main-section {
@@ -401,4 +407,18 @@
 .habitMap{
   height: 5rem;
   width: 100%; 
+}
+
+.habit{
+  margin-left: 0.4%;
+}
+
+.iconhabit{
+  max-width: 40%;
+  max-height: 40%;
+  margin-left: 26%; 
+}
+.habitP{
+  font-size: larger;
+  font-weight: 700;
 }

@@ -387,7 +387,7 @@ function parseDateMMDDYYYY(key){
             const prevHandler = () =>  setToday(prev => prev.clone().subtract(1, 'month'));   //this.state.setToday.clone().subtract(1, 'month');    
             const todayHandler = () => setToday(moment());
             const nextHandler = () =>  setToday(prev => prev.clone().add(1, 'month')); 
-             const itemsSort= items.sort((a,b) => new Date(parseDateMMDDYYYY(a.eventDate)) - new Date(parseDateMMDDYYYY(b.eventDate))).reverse();
+            const itemsSort= items.sort((a,b) => new Date(parseDateMMDDYYYY(a.eventDate)) - new Date(parseDateMMDDYYYY(b.eventDate))).reverse();
           
             return(<>
                 <div className="row mainrow">

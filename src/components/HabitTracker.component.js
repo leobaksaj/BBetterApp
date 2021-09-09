@@ -9,6 +9,7 @@ import {Modal} from 'react-bootstrap';
 import { HabitCalendar } from './HabitCalendar';
 import { MonitorCalendar } from './MonitorCalendar';
 import picture from './picture/writing.jpg';
+import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 
 const ShadowWrapper = styled('div')`
@@ -160,6 +161,48 @@ function HabbitTracker(props){
         })
         }                    
     };  
+    function submitDeleteHabit(e){      
+        e.preventDefault();
+        setHabit({
+            userId: d,
+            habitTitle: habit.habitTitle,
+            start: habit.start,
+            habitDates: [{date: "date11" }],            
+            intentions: [{intention: ""}]
+    });
+        deleteHabit(habit);
+         console.log(habit);         
+    };
+  
+  
+
+    function deleteHabit(habit){
+        console.log(habit._id);
+        
+        axios.delete(`/habits/delete/${habit._id}`)
+        .then(res => {           
+            axios.get(`/habits/all/${d}`)
+            .then(res =>  {
+                setHabits(res.data);  
+            })
+            handleCloseDelete();
+        }).catch((err) => {
+                console.log(err);
+            });
+    }
+
+    function handleShowDelete(id){    
+        setShowDelete(true);            
+        axios.get(`/habits/get/${id}`)
+        .then(res =>  {
+            setHabit(res.data);               
+         })      
+    };
+
+    // const handleClose = () => setShow(false);
+    const handleCloseDelete = () => setShowDelete(false);
+    const [showDelete, setShowDelete] = useState(false);
+
 
     function getDays(){
         var dt = new Date();
@@ -188,14 +231,23 @@ if(props.user){
                         <th scope="col"></th>
                     </tr>
                 </thead>                                                        
-                    {habits.map(item => (<> <br></br>                                   
-                        <button className={item.start === 1 ? "btn btn-primary habitMap" : "btn btn-success habitMap"} onClick={() => handleShowCalendarModal(item._id)}>
-                           <div className="row">
-                               <div className="col-sm-10">{item.habitTitle}</div>
-                               <div className="col-sm-2">{((item.habitDates.map(item => item._id).length) /getDays()*100 ).toFixed(2) + " %"}</div>
-                           </div>
-                        </button>                                                        
-                        <br></br>                                     
+                    {habits.map(item => (<> <br></br> 
+                    <div>
+                        <div className="row"> 
+                            <div className="col-sm-11">                                 
+                            <button className={item.start === 1 ? "btn btn-primary habitMap" : "btn btn-success habitMap"} onClick={() => handleShowCalendarModal(item._id)}>
+                            <div className="row">
+                                <div className="col-sm-10">{item.habitTitle}</div>
+                                <div className="col-sm-2">{((item.habitDates.map(item => item._id).length) /getDays()*100 ).toFixed(2) + " %"}</div>
+                        </div>                          
+                            </button>   
+                            </div> 
+                            <div className="col-sm-1"> 
+                                <button onClick={() => handleShowDelete(item._id)} className="btn btn-danger habitbuttonDelete"><FontAwesomeIcon icon={faTrash} /></button>  
+                            </div>
+                            </div>  
+                    </div>                                                  
+                                                            
                         </>))}                    
                 </table>                                                
             </div>
@@ -279,6 +331,21 @@ if(props.user){
             </form>                 
         </Modal.Body>
     </Modal>
+
+    <Modal show={showDelete} onHide={handleCloseDelete}>
+             <Modal.Header closeButton>
+             <Modal.Title>Obriši</Modal.Title>
+             </Modal.Header>
+             <Modal.Body>                       
+                 <form onSubmit={(e)=> submitDeleteHabit(e)}>
+                     <div className="form-group">
+                         <label>Jeste li sigurni da želite obrisati vaš habit? </label>     
+                         </div>                  
+                     <button className="btn btn-primary updateBtn">Delete</button>                               
+                 </form>   
+                 <button onClick={handleCloseDelete} className="btn btn-danger CloseUpdate">Close</button>              
+             </Modal.Body>
+         </Modal>
     </>)    
 
 }else{

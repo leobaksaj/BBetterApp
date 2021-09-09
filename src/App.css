@@ -409,6 +409,12 @@
   width: 100%; 
 }
 
+.habitbuttonDelete{
+  height: 5rem;
+  width: 100%; 
+}
+
+
 .habit{
   margin-left: 0.4%;
 }

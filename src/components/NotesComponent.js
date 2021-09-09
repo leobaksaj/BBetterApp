@@ -137,11 +137,13 @@ function NotesComponent(props){
     }
 
     function parseDateYYYYMMDD(key){ 
-        var dd = today.getFullYear();
+        var yyyy = today.getFullYear();
         var mm = today.getMonth()+1;
-        var yyyy = today.getDate();
+        var dd = today.getDate();
+        var dd1 = dd < 10 ? '0'+dd : dd;
         var mm1 = mm < 10 ? '0'+mm : mm;
-        const date =dd+"-"+mm1+"-"+yyyy;      
+        const date =yyyy+"-"+mm1+"-"+dd1;  
+        console.log(date);    
         return date;
     }
     function submitUpdate(e){      
@@ -228,7 +230,8 @@ function NotesComponent(props){
      const [searchTerm, setSearchTerm] = useState("")
       
     if(props.user){  
-             
+        const itemsSort= items.sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
+                     
         return(  
             <>         
             <div className="row mainrow">
@@ -280,7 +283,7 @@ function NotesComponent(props){
                             <h1>Notes</h1>
                             <div className="sessionMapNotes">    
                             <div className="container">                 
-                                {items.filter((item) => {
+                                {itemsSort.filter((item) => {
                                     if(searchTerm =="" && item.synced !== 3 && item.createdAt.substring(0,10) !== parseDateYYYYMMDD(today)){
                                         return item
                                     }else if(item.synced !== 3 && item.noteContent.toLowerCase().includes(searchTerm.toLowerCase())  && item.createdAt.substring(0,10) !== parseDateYYYYMMDD(today)

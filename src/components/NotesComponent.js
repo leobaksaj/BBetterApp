@@ -86,16 +86,26 @@ function NotesComponent(props){
 
     function submitDeleteNotes(e){      
         e.preventDefault();
-        setNotes({
+        setNotesDel({
             userId: d,
             noteTitle: "",
             noteContent: "",
             noteArchived: false,
             synced: 3
         });
-        deleteNotes(note);
-         console.log(note);         
+        deleteNotes(noteDel);
+         console.log(noteDel);         
     };
+
+    const [noteDel, setNotesDel] = useState({
+        userId: d,
+        noteTitle: "",
+        noteContent: "",
+        noteArchived: false,
+        synced: 0,
+        titleError: "",
+        contentError: "",
+    });
     
     function deleteNotes(note1){
         console.log(note1._id);
@@ -103,8 +113,8 @@ function NotesComponent(props){
         axios.put(`/notes/put/${note1._id}`,{
              _id: note1._id,
             userId: d,
-            noteTitle:  note.noteTitle,
-            noteContent:  note.noteContent,
+            noteTitle:  noteDel.noteTitle,
+            noteContent:  noteDel.noteContent,
             noteArchived: false,
             synced: 3
         })
@@ -209,7 +219,7 @@ function NotesComponent(props){
         setShowDelete(true);            
         axios.get(`/notes/get/${id}`)
         .then(res =>  {
-            setNotes(res.data);               
+            setNotesDel(res.data);               
          })      
     };
     const reload=()=>window.location.reload();
@@ -239,8 +249,8 @@ function NotesComponent(props){
                 <div className="container">
                     <div className="tab">
                         <div className="bloc-tabs">
-                        <button className={toggleState === 1 ? "tabs active-tabs" : "tabs"}  onClick={() => toggleTab(1)}>Notes</button>
-                        <button className={toggleState === 2 ? "tabs active-tabs" : "tabs"}  onClick={() => toggleTab(2)}>Old Notes</button>
+                        <button className={toggleState === 1 ? "tabs active-tabs" : "tabs"}  onClick={() => toggleTab(1)}>Bilješke</button>
+                        <button className={toggleState === 2 ? "tabs active-tabs" : "tabs"}  onClick={() => toggleTab(2)}>Stare bilješke</button>
                         </div>
                     </div>
                     <div className="content-tabs">   
@@ -248,7 +258,7 @@ function NotesComponent(props){
                             <div>
                                 <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." className="form-control searchNotes"></input>
                             </div>                 
-                            <h1>Notes</h1>
+                            <h1>Bilješke</h1>
                             <div className="sessionMapNotes">    
                             <div className="container">                 
                                 {items.filter((item) => {
@@ -280,7 +290,7 @@ function NotesComponent(props){
                             <div>
                                 <input onChange={event => {setSearchTerm(event.target.value)}} type="text" placeholder="Search..." className="form-control searchNotes" ></input>
                             </div>                  
-                            <h1>Notes</h1>
+                            <h1>Bilješke</h1>
                             <div className="sessionMapNotes">    
                             <div className="container">                 
                                 {itemsSort.filter((item) => {
@@ -309,11 +319,8 @@ function NotesComponent(props){
                             </div> 
                         </div>
                     </div>
-
-
                     </div>
-            </div>
-                    
+            </div>                    
                     <div className="todo col-md-7 notes">
                         <h2>Ovdje opišite svoj dan!</h2>
                         <div className="container">
@@ -360,9 +367,9 @@ function NotesComponent(props){
                                 <label>Obilježi svoj dan</label>
                                 <textarea required onChange={(e) => handleChange(e)} value={note.noteContent} name="noteContent" className="form-control" type="text"  rows="12" ></textarea>
                             </div>                                                           
-                            <button className="btn btn-primary updateBtn">Update</button>                               
+                            <button className="btn btn-primary updateBtn">Ažuriraj</button>                               
                         </form>   
-                        <button onClick={handleClose} className="btn btn-danger CloseUpdate">Close</button>              
+                        <button onClick={handleClose} className="btn btn-danger CloseUpdate">Zatvori</button>              
                     </Modal.Body>
                 </Modal>
 
@@ -375,9 +382,9 @@ function NotesComponent(props){
                      <div className="form-group">
                          <label>Jeste li sigurni da želite obrisati bilješku? </label>     
                          </div>                  
-                     <button className="btn btn-primary updateBtn">Delete</button>                               
+                     <button className="btn btn-primary updateBtn">Obriši</button>                               
                  </form>   
-                 <button onClick={handleCloseDelete} className="btn btn-danger CloseUpdate">Close</button>              
+                 <button onClick={handleCloseDelete} className="btn btn-danger CloseUpdate">Zatvori</button>              
              </Modal.Body>
          </Modal>
             </>

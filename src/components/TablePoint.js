@@ -27,8 +27,16 @@ return(
             <td>400 - 600</td>                                
             </tr>
             <tr>            
-            <td>LEVEL 3</td>
+            <td>LEVEL 4</td>
             <td>600 - 800</td>                                
+            </tr>
+            <tr>            
+            <td>LEVEL 5</td>
+            <td>800 - 1000</td>                                
+            </tr>
+            <tr>            
+            <td>LEVEL 6</td>
+            <td>1000 - 1200</td>                                
             </tr>
         </tbody>
     </table>

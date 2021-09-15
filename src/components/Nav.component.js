@@ -5,17 +5,19 @@ export default class Nav extends Component{
 
   handleLogout= () => {
       localStorage.clear();
-      this.props.setUser(null);
+      this.props.setUser();
   }
+ 
 
     render(){
-
+     
       let buttons;
       if(this.props.user){
+        console.log(this.props.user.firstName + "Ja ja ");
         buttons =(          
           <ul className="navbar-nav">   
            <li className="hiName">
-               Hi, {this.props.user.firstName} {this.props.user.lastName}  |  
+               Bok, {this.props.user.firstName} {this.props.user.lastName}  |  
             </li>            
             <li className="logout">
               <Link className="nav-link" onClick={this.handleLogout} to={'/'}>Logout</Link>
@@ -38,8 +40,8 @@ export default class Nav extends Component{
             <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
               <div className="container-fluid">
                 <ul className="nav navbar-nav">
-                  <li><Link className="navbar-brand" to={'/'}>Home </Link></li>                  
-                  <li><Link className="navbar-brand" to={'/notes'}>Notes </Link></li>
+                  <li><Link className="navbar-brand" to={'/'}>Početna </Link></li>                  
+                  <li><Link className="navbar-brand" to={'/notes'}>Bilješke </Link></li>
                   <li><Link className="navbar-brand" to={'/bodovi'}>Bodovi </Link></li>
                   <li><Link className="navbar-brand" to={'/habit'}>Habbit tracker </Link></li>
                 </ul>

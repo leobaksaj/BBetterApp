@@ -13,7 +13,6 @@ import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 import ReactTooltip from 'react-tooltip';
 import Tooltip from "react-simple-tooltip"
-
 const ShadowWrapper = styled('div')`
   border-top: 1px solid #737374;
   border-left: 1px solid #464648;
@@ -26,13 +25,27 @@ const ShadowWrapper = styled('div')`
 
 function Home(props){
 
-  let d = localStorage.getItem('data');  
-  const refreshPage = ()=>{
-    axios.get(`/events/all/${d}`)
-    .then(res =>  {
-        setItems(res.data);   
-    });
- }    
+    let d = localStorage.getItem('data');   
+    useEffect(() => {
+      axios.get(`/events/all/${d}`)
+      .then(res =>  {
+          setItems(res.data);   
+      });   
+      axios.get(`/sessions/all/${d}`)
+      .then(res =>  {
+          setSessions(res.data);   
+      });          
+    },[]);
+
+
+
+    const refreshPage = ()=>{
+      axios.get(`/events/all/${d}`)
+      .then(res =>  {
+          setItems(res.data);   
+      });
+    } 
+
     ////////// KALENDAR ////////////////
     const [items, setItems] = useState([]); 
     const [items1, setItems1] = useState(); 
@@ -43,17 +56,6 @@ function Home(props){
     const [today, setToday] = useState(moment());
     const startDay = today.clone().startOf('month').startOf('week'); 
 
-    useEffect(() => {
-        axios.get(`/events/all/${d}`)
-        .then(res =>  {
-            setItems(res.data);   
-        });   
-        axios.get(`/sessions/all/${d}`)
-        .then(res =>  {
-            setSessions(res.data);   
-        });  
-        
-    },[]);
 
     /////////////////////// KRAJ KALENDARA //////////////////
     //////////////////////// TIMER ////////////////////
@@ -588,7 +590,7 @@ function parseDateMMDDYYYY(key){
                          </div>                  
                      <button className="btn btn-primary updateBtn">Potvrdi</button>                               
                  </form>   
-                 <button onClick={handleClose} className="btn btn-danger CloseUpdate">Close</button>              
+                 <button onClick={handleClose} className="btn btn-danger CloseUpdate">Zatvori</button>              
              </Modal.Body>
          </Modal>
             
@@ -601,9 +603,9 @@ function parseDateMMDDYYYY(key){
                      <div className="form-group">
                          <label>Jeste li sigurni da želite obrisati event? </label>     
                          </div>                  
-                     <button className="btn btn-primary updateBtn">Delete</button>                               
+                     <button className="btn btn-primary updateBtn">Obriši</button>                               
                  </form>   
-                 <button onClick={handleCloseDelete} className="btn btn-danger CloseUpdate">Close</button>              
+                 <button onClick={handleCloseDelete} className="btn btn-danger CloseUpdate">Zatvori</button>              
              </Modal.Body>
          </Modal>
             </>

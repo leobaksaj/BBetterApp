@@ -19,7 +19,7 @@ import { HabbitTracker } from './components/HabitTracker.component';
       let d = localStorage.getItem('data');  
       axios.get(`/users/get/${d}`).then(
           res => {
-              this.setUser(res.data);
+              this.setUser(res.data[0]);
           },
           err => {
               console.log(err);
